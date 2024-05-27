@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Optional for date formatting
 
-class PillReminder {
-  final String medicationName;
+class AppointmentReminder {
+  final String appointmentName;
   final DateTime reminderDateTime;
 
-  PillReminder(this.medicationName, this.reminderDateTime);
+  AppointmentReminder(this.appointmentName, this.reminderDateTime);
 }
 
-class PillReminderScreen extends StatefulWidget {
+class AppointmentReminderScreen extends StatefulWidget {
   @override
-  _PillReminderScreenState createState() => _PillReminderScreenState();
+  _AppointmentReminderScreenState createState() =>
+      _AppointmentReminderScreenState();
 }
 
-class _PillReminderScreenState extends State<PillReminderScreen> {
-  String medicationName = "";
+class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
+  String appointmentName = "";
   DateTime? reminderDateTime;
-  List<PillReminder> reminders = []; // List to store reminders
+  List<AppointmentReminder> reminders = []; // List to store reminders
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(
-      //   title: Text("Pill Reminders"),
+      //   title: Text("Appointment Reminders"),
       // ),
       body: SingleChildScrollView(
         child: Padding(
@@ -30,8 +31,8 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
           child: Column(
             children: [
               TextField(
-                decoration: InputDecoration(labelText: "Medication Name"),
-                onChanged: (value) => setState(() => medicationName = value),
+                decoration: InputDecoration(labelText: "Appointment Title"),
+                onChanged: (value) => setState(() => appointmentName = value),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,7 +63,7 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
                 itemBuilder: (context, index) {
                   final reminder = reminders[index];
                   return ListTile(
-                    title: Text(reminder.medicationName),
+                    title: Text(reminder.appointmentName),
                     subtitle: Text(DateFormat.yMd()
                         .add_jm()
                         .format(reminder.reminderDateTime!)),
@@ -113,15 +114,15 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
   }
 
   void _saveReminder() {
-    if (medicationName.isEmpty || reminderDateTime == null) {
-      return; // Handle empty medication name or missing reminder time (optional)
+    if (appointmentName.isEmpty || reminderDateTime == null) {
+      return; // Handle empty appointment name or missing reminder time (optional)
     }
 
-    final reminder = PillReminder(medicationName, reminderDateTime!);
+    final reminder = AppointmentReminder(appointmentName, reminderDateTime!);
 
     setState(() {
       reminders.add(reminder);
-      medicationName = ""; // Reset medication name for next reminder
+      appointmentName = ""; // Reset appointment name for next reminder
       reminderDateTime = null; // Reset reminder DateTime for next reminder
     });
   }

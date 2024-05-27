@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../screens/reminder.dart'; // Import RemindersScreen
+import '../screens/appointment_reminder.dart';
+import '../screens/pill_reminder.dart'; // Existing import
 import '../screens/pharmacy.dart';
 import '../screens/entertainment.dart';
 import '../screens/emergency.dart';
@@ -11,7 +12,7 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
-  int _selectedIndex = 0; // Track selected index for navigation bar
+  int _selectedIndex = 0; // Track selected index
 
   final List<Widget> _screens = []; // List of screens to navigate to
 
@@ -19,15 +20,15 @@ class _NavbarState extends State<Navbar> {
   void initState() {
     super.initState();
     _screens.addAll([
-      // Create screens with TabController (assuming 2 tabs for reminders)
-      DefaultTabController(
-        length: 2,
-        child: RemindersScreen(),
-      ),
+      PillReminderScreen(), // Separate screen for Pill Reminders
+      AppointmentReminderScreen(), // Separate screen for Appointment Reminders (new)
       PharmacyScreen(),
       EntertainmentScreen(),
       EmergencyScreen(),
-      ProfileScreen(),
+      ProfileScreen(
+        username: "Mohamad",
+        email: "mohamad@test.com",
+      ),
     ]);
   }
 
@@ -53,8 +54,12 @@ class _NavbarState extends State<Navbar> {
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.medication), // Changed icon for clarity
+            label: 'Pill Reminders',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
-            label: 'Reminders',
+            label: 'Appointment Reminders',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),

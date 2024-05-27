@@ -66,7 +66,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                     title: Text(reminder.appointmentName),
                     subtitle: Text(DateFormat.yMd()
                         .add_jm()
-                        .format(reminder.reminderDateTime!)),
+                        .format(reminder.reminderDateTime)),
                     // Use DateFormat for user-friendly date/time formatting (optional)
                     trailing: IconButton(
                       icon: Icon(Icons.delete),

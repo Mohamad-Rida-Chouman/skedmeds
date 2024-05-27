@@ -65,7 +65,7 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
                     title: Text(reminder.medicationName),
                     subtitle: Text(DateFormat.yMd()
                         .add_jm()
-                        .format(reminder.reminderDateTime!)),
+                        .format(reminder.reminderDateTime)),
                     // Use DateFormat for user-friendly date/time formatting (optional)
                     trailing: IconButton(
                       icon: Icon(Icons.delete),

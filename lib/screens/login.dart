@@ -34,11 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Login"),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
@@ -58,7 +53,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     // Username field
                     TextFormField(
-                      decoration: InputDecoration(labelText: "Username"),
+                      decoration: InputDecoration(
+                        labelText: "Username",
+                        floatingLabelStyle: TextStyle(color: Colors.teal),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .primaryColor, // Use theme's blue color
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .primaryColor, // Use theme's blue color
+                          ),
+                        ),
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter your username";
@@ -71,7 +81,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Password field
                     TextFormField(
-                      decoration: InputDecoration(labelText: "Password"),
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        floatingLabelStyle: TextStyle(color: Colors.teal),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .primaryColor, // Use theme's blue color
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .primaryColor, // Use theme's blue color
+                          ),
+                        ),
+                      ),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -88,6 +113,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () =>
                           _login(context), // Call _login with context
                       child: Text("Login"),
+                      style: TextButton.styleFrom(
+                        foregroundColor:
+                            Colors.white, // Text color for button (optional)
+                        backgroundColor: Color(0xFF38B3CD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(4.0), // Set rounded corners
+                        ),
+                      ),
                     )
                   ],
                 ),

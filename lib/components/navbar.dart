@@ -41,11 +41,6 @@ class _NavbarState extends State<Navbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('SkedMeds'),
-        centerTitle: true,
-      ),
       body: _screens[_selectedIndex], // Display current selected screen
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.lightBlue,
@@ -70,11 +65,11 @@ class _NavbarState extends State<Navbar> {
             label: 'Entertainment',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.emergency),
             label: 'Emergency',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],

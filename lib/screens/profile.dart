@@ -31,6 +31,42 @@ class ProfileScreen extends StatelessWidget {
           mainAxisAlignment:
               MainAxisAlignment.center, // Center content vertically
           children: [
+            Card(
+              color: Color(0xFF38B3CD),
+              elevation: 2.0, // Optional shadow effect
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.0), // Add padding inside the card
+                child: Column(
+                  children: [
+                    // Title
+                    Text(
+                      "SkedMeds",
+                      style: TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // White text color
+                      ),
+                    ),
+                    SizedBox(
+                        height:
+                            8.0), // Add smaller spacing between title and slogan
+
+                    // Slogan
+                    Text(
+                      "SCHEDULING MEDICATIONS MADE SIMPLE!",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.white, // White text color
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0), // Add spacing
             Text(
               "Username:",
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
@@ -52,6 +88,15 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
               child: Text("Logout"),
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    Colors.white, // Text color for button (optional)
+                backgroundColor: Color(0xFF38B3CD),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(4.0), // Set rounded corners
+                ),
+              ),
             ),
           ],
         ),

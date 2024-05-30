@@ -31,8 +31,26 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
           child: Column(
             children: [
               TextField(
-                decoration: InputDecoration(labelText: "Appointment Title"),
+                decoration: InputDecoration(
+                  labelText: "Appoinment Title",
+                  floatingLabelStyle: TextStyle(color: Colors.teal),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context)
+                          .primaryColor, // Use theme's blue color
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context)
+                          .primaryColor, // Use theme's blue color
+                    ),
+                  ),
+                ),
                 onChanged: (value) => setState(() => appointmentName = value),
+              ),
+              SizedBox(
+                height: 16.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,16 +58,43 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                   TextButton(
                     onPressed: () => _showDatePicker(context),
                     child: Text("Set Date"),
+                    style: TextButton.styleFrom(
+                      foregroundColor:
+                          Colors.white, // Text color for button (optional)
+                      backgroundColor: Color(0xFF38B3CD),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(4.0), // Set rounded corners
+                      ),
+                    ),
                   ),
                   TextButton(
                     onPressed: () => _showTimePicker(context),
                     child: Text("Set Time"),
+                    style: TextButton.styleFrom(
+                      foregroundColor:
+                          Colors.white, // Text color for button (optional)
+                      backgroundColor: Color(0xFF38B3CD),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(4.0), // Set rounded corners
+                      ),
+                    ),
                   ),
                 ],
               ),
               ElevatedButton(
                 onPressed: () => _saveReminder(),
                 child: Text("Save Reminder"),
+                style: TextButton.styleFrom(
+                  foregroundColor:
+                      Colors.white, // Text color for button (optional)
+                  backgroundColor: Color(0xFF38B3CD),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(4.0), // Set rounded corners
+                  ),
+                ),
               ),
               SizedBox(height: 16.0), // Add spacing
               Text(

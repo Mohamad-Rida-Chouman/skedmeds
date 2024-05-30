@@ -28,11 +28,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Register"),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
@@ -54,7 +49,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       // Username field
                       TextFormField(
-                        decoration: InputDecoration(labelText: "Username"),
+                        decoration: InputDecoration(
+                          labelText: "Username",
+                          floatingLabelStyle: TextStyle(color: Colors.teal),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your username";
@@ -67,7 +77,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       // Email field
                       TextFormField(
-                        decoration: InputDecoration(labelText: "Email"),
+                        decoration: InputDecoration(
+                          labelText: "Email",
+                          floatingLabelStyle: TextStyle(color: Colors.teal),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your email";
@@ -84,7 +109,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       // Password field
                       TextFormField(
-                        decoration: InputDecoration(labelText: "Password"),
+                        decoration: InputDecoration(
+                          labelText: "Passsword",
+                          floatingLabelStyle: TextStyle(color: Colors.teal),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .primaryColor, // Use theme's blue color
+                            ),
+                          ),
+                        ),
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -100,6 +140,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ElevatedButton(
                         onPressed: _register,
                         child: Text("Register"),
+                        style: TextButton.styleFrom(
+                          foregroundColor:
+                              Colors.white, // Text color for button (optional)
+                          backgroundColor: Color(0xFF38B3CD),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                4.0), // Set rounded corners
+                          ),
+                        ),
                       ),
                     ],
                   ),

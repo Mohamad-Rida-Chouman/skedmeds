@@ -91,11 +91,25 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: TextField(
+          style:
+              TextStyle(color: Colors.white), // Set text color for user input
           // Search bar
           decoration: InputDecoration(
-            hintText: "Search medicine...",
+            hintStyle: TextStyle(color: Colors.white), // Set label text color
+            hintText: "Search medicines...",
             prefixIcon: Icon(Icons.search),
+            prefixIconColor: Colors.white,
+            enabledBorder: UnderlineInputBorder(
+              // Use UnderlineInputBorder
+              borderSide: BorderSide(color: Colors.white), // White border
+            ),
+            focusedBorder: UnderlineInputBorder(
+              // Use UnderlineInputBorder for focus
+              borderSide:
+                  BorderSide(color: Colors.white), // White border for focus
+            ),
           ),
           onChanged: (text) {
             setState(() {
@@ -110,7 +124,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart), // Cart icon
+            icon: Icon(Icons.shopping_cart, color: Colors.white), // Cart icon
             onPressed: () => _showCartModal(),
           ),
         ],
@@ -215,6 +229,15 @@ class PharmacyItemCard extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () => onAddToCart(item),
                     child: Text("Add to Cart"),
+                    style: TextButton.styleFrom(
+                      foregroundColor:
+                          Colors.white, // Text color for button (optional)
+                      backgroundColor: Color(0xFF38B3CD),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(4.0), // Set rounded corners
+                      ),
+                    ),
                   ),
                 ],
               ),

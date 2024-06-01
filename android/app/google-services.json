@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "367102815721",
+    "project_id": "skedmeds-v2",
+    "storage_bucket": "skedmeds-v2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367102815721:android:d2c1051628cee777f5ef78",
+        "android_client_info": {
+          "package_name": "com.example.skedmeds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClHKPjVRo-P0SEZ1-QuVwMYUBxOoGq_Vw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367102815721:android:4c8bd5c0d3edcf56f5ef78",
+        "android_client_info": {
+          "package_name": "come.example.skedmeds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClHKPjVRo-P0SEZ1-QuVwMYUBxOoGq_Vw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

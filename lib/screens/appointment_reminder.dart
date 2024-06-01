@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Optional for date formatting
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore dependency
+import 'package:uuid/uuid.dart'; // For generating unique IDs
 
 class AppointmentReminder {
+  final String? id; // Added ID field
   final String appointmentName;
   final DateTime reminderDateTime;
 
-  AppointmentReminder(this.appointmentName, this.reminderDateTime);
+  AppointmentReminder(this.appointmentName, this.reminderDateTime, {this.id});
+
+  static String generateId() => Uuid().v4(); // Static method to generate ID
+
+  AppointmentReminder copyWith(
+      {String? id, String? appointmentName, DateTime? reminderDateTime}) {
+    return AppointmentReminder(
+      appointmentName ?? this.appointmentName,
+      reminderDateTime ?? this.reminderDateTime,
+      id: id ?? this.id,
+    );
+  }
 }
 
 class AppointmentReminderScreen extends StatefulWidget {
@@ -19,12 +33,12 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   DateTime? reminderDateTime;
   List<AppointmentReminder> reminders = []; // List to store reminders
 
+  // Add a reference to Firestore
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Appointment Reminders"),
-      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -32,7 +46,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
             children: [
               TextField(
                 decoration: InputDecoration(
-                  labelText: "Appoinment Title",
+                  labelText: "Appointment Title",
                   floatingLabelStyle: TextStyle(color: Colors.teal),
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
@@ -84,7 +98,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () => _saveReminder(),
+                onPressed: _saveReminder,
                 child: Text("Save Reminder"),
                 style: TextButton.styleFrom(
                   foregroundColor:
@@ -158,23 +172,86 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
     }
   }
 
-  void _saveReminder() {
-    if (appointmentName.isEmpty || reminderDateTime == null) {
-      return; // Handle empty appointment name or missing reminder time (optional)
-    }
-
-    final reminder = AppointmentReminder(appointmentName, reminderDateTime!);
-
-    setState(() {
-      reminders.add(reminder);
-      appointmentName = ""; // Reset appointment name for next reminder
-      reminderDateTime = null; // Reset reminder DateTime for next reminder
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchReminders(); // Fetch reminders on app launch
   }
 
-  void _removeReminder(int index) {
+  void _fetchReminders() async {
+    try {
+      final snapshot =
+          await _firestore.collection('appointments_reminder').get();
+      reminders.clear();
+      for (final doc in snapshot.docs) {
+        final reminderMap = doc.data() as Map<String, dynamic>;
+        if (reminderMap != null && reminderMap.containsKey("dateTime")) {
+          final reminderString = reminderMap["dateTime"];
+          try {
+            // Parse using ISO 8601 format
+            final reminderDateTime = DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
+                .parseStrict(reminderString);
+            final reminder = AppointmentReminder(
+              reminderMap["name"],
+              reminderDateTime,
+              id: doc.id,
+            );
+            reminders.add(reminder);
+          } on FormatException catch (error) {
+            print("Error parsing date/time for reminder ${doc.id}: $error");
+            // Handle parsing errors (optional)
+          }
+        } else {
+          // Handle cases where data is missing (optional)
+        }
+      }
+      setState(() {});
+    } catch (error) {
+      print("Error fetching appointments: $error");
+      // Handle errors (e.g., snackbar)
+    }
+  }
+
+  void _saveReminder() async {
+    if (appointmentName.isEmpty || reminderDateTime == null) {
+      return; // Handle empty fields (optional)
+    }
+
+    try {
+      final docRef = _firestore
+          .collection('appointments_reminder')
+          .doc(); // Generate unique ID
+
+      await docRef.set({
+        'name': appointmentName,
+        'dateTime': DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
+            .format(reminderDateTime!), // Use ISO 8601 format
+      });
+
+      setState(() {
+        reminders.add(AppointmentReminder(
+          appointmentName,
+          reminderDateTime!,
+          id: docRef.id,
+        ));
+        appointmentName = "";
+        reminderDateTime = null;
+      });
+    } catch (error) {
+      print("Error saving reminder: $error");
+      // Handle errors (e.g., snackbar)
+    }
+  }
+
+  void _removeReminder(int index) async {
     setState(() {
       reminders.removeAt(index);
     });
+
+    // Optionally, remove from Firestore if needed
+    final id = reminders[index].id;
+    if (id != null) {
+      await _firestore.collection('appointments_reminder').doc(id).delete();
+    }
   }
 }

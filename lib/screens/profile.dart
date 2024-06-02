@@ -1,31 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './login.dart';
 
-// Replace with your actual navigation logic (e.g., using a navigation service)
-void navigateToLogin(BuildContext context) {
-  // Pop the current screen (profile)
-  Navigator.of(context).pop();
-  // Replace the following with your login screen navigation logic
-  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-}
-
-void logout(BuildContext context) {
-  // Clear user data or perform logout actions (optional)
+void logout(BuildContext context) async {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  try {
+    await _auth.signOut();
+    // Navigate to LoginScreen after successful logout
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  } catch (error) {
+    print(error.toString()); // Handle logout errors (optional)
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred while logging out.")));
+  }
 }
 
 class ProfileScreen extends StatelessWidget {
-  final String username;
-  final String email;
-
-  const ProfileScreen({Key? key, required this.username, required this.email})
-      : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Profile"),
-      // ),
       body: Center(
         child: Column(
           mainAxisAlignment:
@@ -51,8 +46,9 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                        height:
-                            8.0), // Add smaller spacing between title and slogan
+                      height:
+                          8.0, // Add smaller spacing between title and slogan
+                    ),
 
                     // Slogan
                     Text(
@@ -67,25 +63,21 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0), // Add spacing
-            Text(
-              "Username:",
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            ),
-            Text(username),
-            SizedBox(height: 16.0), // Add spacing
+
+            // Display user email directly in the "Email" field
             Text(
               "Email:",
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
-            Text(email),
+            Text(
+              FirebaseAuth.instance.currentUser?.email ??
+                  "", // Get email from user object
+            ),
             SizedBox(height: 16.0), // Add spacing
+
             ElevatedButton(
               onPressed: () {
-                logout(context); // Perform logout actions (optional)
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                logout(context);
               },
               child: Text("Logout"),
               style: TextButton.styleFrom(

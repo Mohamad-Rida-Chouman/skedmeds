@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -10,18 +11,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _username = "";
   String _email = "";
   String _password = "";
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/login");
   }
 
-  void _register() {
+  Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print("Username: $_username");
-      print("Email: $_email");
-      print("Password: $_password");
-      // Implement actual registration logic here (e.g., call an API)
+
+      try {
+        // Create a new user with email and password
+        UserCredential userCredential = await _auth
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+
+        // Handle successful registration (optional)
+        print("User registered successfully: ${userCredential.user!.uid}");
+        // You can navigate to another screen or show a success message here
+
+        // Optionally send email verification (uncomment to enable)
+        // await userCredential.user!.sendEmailVerification();
+        // print("Email verification link sent");
+      } on FirebaseAuthException catch (error) {
+        if (error.code == 'weak-password') {
+          print('The password provided is too weak.');
+          // Show an error message to the user (e.g., using SnackBar)
+        } else if (error.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+          // Show an error message to the user
+        } else {
+          print(error.code);
+          // Handle other FirebaseAuthException errors (optional)
+        }
+      } catch (error) {
+        print(error.toString());
+        // Handle other errors (optional)
+      }
     }
   }
 
@@ -32,7 +58,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: SingleChildScrollView(
-            // Allow scrolling if content overflows
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -47,33 +72,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Username field
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: "Username",
-                          floatingLabelStyle: TextStyle(color: Colors.teal),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
-                            ),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
-                            ),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter your username";
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) => _username = newValue!,
-                      ),
-                      SizedBox(height: 10.0),
+                      // Username field - currently not used for registration with Firebase Auth
+                      // TextFormField(
+                      //   decoration: InputDecoration(
+                      //     labelText: "Username",
+                      //     floatingLabelStyle: TextStyle(color: Colors.teal),
+                      //     enabledBorder: UnderlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //     ),
+                      //     focusedBorder: UnderlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   // Consider using username later for display purposes or other functionalities
+                      //   // onSaved: (newValue) => _username = newValue!,
+                      // ),
+                      // SizedBox(height: 10.0),
 
                       // Email field
                       TextFormField(
@@ -82,14 +100,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           floatingLabelStyle: TextStyle(color: Colors.teal),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -107,31 +123,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(height: 10.0),
 
-                      // Password field
                       TextFormField(
                         decoration: InputDecoration(
-                          labelText: "Passsword",
+                          labelText: "Password",
                           floatingLabelStyle: TextStyle(color: Colors.teal),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .primaryColor, // Use theme's blue color
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
-                        obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please enter your password";
+                          } else if (value.length < 6) {
+                            return "Password must be at least 6 characters";
                           }
                           return null;
                         },
+                        obscureText: true,
                         onSaved: (newValue) => _password = newValue!,
                       ),
                       SizedBox(height: 20.0),

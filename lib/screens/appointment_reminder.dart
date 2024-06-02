@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart'; // Optional for date formatting
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore dependency
 import 'package:uuid/uuid.dart'; // For generating unique IDs
@@ -179,23 +180,28 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   }
 
   void _fetchReminders() async {
+    final currentUserId =
+        FirebaseAuth.instance.currentUser?.uid; // Get current user ID
+
+    if (currentUserId == null) return; // Handle no logged-in user
+
     try {
-      final snapshot =
-          await _firestore.collection('appointments_reminder').get();
+      final snapshot = await _firestore
+          .collection('appointments_reminder')
+          .where('userId', isEqualTo: currentUserId) // Filter by user ID
+          .get();
       reminders.clear();
       for (final doc in snapshot.docs) {
         final reminderMap = doc.data() as Map<String, dynamic>;
         if (reminderMap != null && reminderMap.containsKey("dateTime")) {
           final reminderString = reminderMap["dateTime"];
           try {
-            // Parse using ISO 8601 format
+            // Parse using ISO 8601 format (same as before)
             final reminderDateTime = DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
                 .parseStrict(reminderString);
             final reminder = AppointmentReminder(
-              reminderMap["name"],
-              reminderDateTime,
-              id: doc.id,
-            );
+                reminderMap["name"], reminderDateTime,
+                id: doc.id);
             reminders.add(reminder);
           } on FormatException catch (error) {
             print("Error parsing date/time for reminder ${doc.id}: $error");
@@ -213,19 +219,17 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   }
 
   void _saveReminder() async {
-    if (appointmentName.isEmpty || reminderDateTime == null) {
-      return; // Handle empty fields (optional)
-    }
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    if (currentUserId == null) return; // Handle no logged-in user
 
     try {
-      final docRef = _firestore
+      final docRef = await FirebaseFirestore.instance
           .collection('appointments_reminder')
-          .doc(); // Generate unique ID
-
-      await docRef.set({
+          .add({
         'name': appointmentName,
         'dateTime': DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
             .format(reminderDateTime!), // Use ISO 8601 format
+        'userId': currentUserId, // Add userID field
       });
 
       setState(() {
@@ -248,10 +252,17 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
       reminders.removeAt(index);
     });
 
-    // Optionally, remove from Firestore if needed
     final id = reminders[index].id;
     if (id != null) {
-      await _firestore.collection('appointments_reminder').doc(id).delete();
+      try {
+        await FirebaseFirestore.instance
+            .collection('appointments_reminder')
+            .doc(id)
+            .delete();
+      } catch (error) {
+        print("Error removing reminder: $error");
+        // Handle errors (e.g., snackbar)
+      }
     }
   }
 }

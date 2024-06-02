@@ -25,10 +25,7 @@ class _NavbarState extends State<Navbar> {
       PharmacyScreen(),
       EntertainmentScreen(),
       EmergencyScreen(),
-      ProfileScreen(
-        username: "Mohamad",
-        email: "mohamad@test.com",
-      ),
+      ProfileScreen(),
     ]);
   }
 

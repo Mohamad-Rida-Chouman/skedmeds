@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Optional for date formatting
 import 'package:uuid/uuid.dart'; // For generating unique IDs
@@ -7,7 +8,7 @@ class PillReminder {
   final String medicationName;
   final TimeOfDay reminderTime;
   final int frequency;
-  final String? id; // Optional ID field (can be null)
+  final String? id;
 
   PillReminder(this.medicationName, this.reminderTime, this.frequency,
       {this.id});
@@ -29,7 +30,7 @@ class PillReminder {
     }
   }
 
-  static String generateId() => Uuid().v4(); // Static method to generate ID
+  static String generateId() => Uuid().v4();
 
   // Added copyWith method
   PillReminder copyWith({
@@ -38,12 +39,9 @@ class PillReminder {
     int? frequency,
     String? id,
   }) {
-    return PillReminder(
-      medicationName ?? this.medicationName,
-      reminderTime ?? this.reminderTime,
-      frequency ?? this.frequency,
-      id: id ?? this.id,
-    );
+    return PillReminder(medicationName ?? this.medicationName,
+        reminderTime ?? this.reminderTime, frequency ?? this.frequency,
+        id: id ?? this.id);
   }
 }
 
@@ -91,13 +89,14 @@ class PillReminderScreen extends StatefulWidget {
 }
 
 class _PillReminderScreenState extends State<PillReminderScreen> {
-  final CollectionReference remindersCollection = FirebaseFirestore.instance
-      .collection('pill_reminders'); // Reference to reminders collection
+  final CollectionReference<Map<String, dynamic>> remindersCollection =
+      FirebaseFirestore.instance.collection('pill_reminders');
+
   String medicationName = "";
   TimeOfDay? reminderTime;
-  int frequency = 1; // Default frequency is 1 (once a day)
+  int frequency = 1;
   List<PillReminder> reminders = [];
-  bool isLoading = false; // Flag to indicate data loading state
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -108,28 +107,38 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchReminders(); // Fetch reminders again when the screen becomes active
+    _fetchReminders(); // Fetch again on screen activation
+  }
+
+  // Get the current user ID from Firebase Authentication
+  String get currentUserId => FirebaseAuth.instance.currentUser!.uid;
+
+  Query<Map<String, dynamic>> getUserRemindersCollection() {
+    // Add the where clause to filter by current user ID
+    return remindersCollection.where('userId', isEqualTo: currentUserId);
   }
 
   void _fetchReminders() async {
     setState(() => isLoading = true);
     try {
-      final snapshot = await remindersCollection.get();
+      final snapshot =
+          await getUserRemindersCollection().get(); // Get documents
       reminders.clear();
       for (final doc in snapshot.docs) {
-        final reminderMap = doc.data() as Map<String, dynamic>;
-        final reminderTime =
-            DateTime.parse(reminderMap["reminderTime"]); // Parse time string
+        // Loop through documents
+        final reminderMap = doc.data() as Map<String, dynamic>; // Extract data
+        final reminderTime = DateTime.parse(reminderMap["reminderTime"]);
         final reminder = PillReminder(
           reminderMap["medicationName"],
           TimeOfDay.fromDateTime(reminderTime),
           reminderMap["frequency"],
+          id: doc.id,
         );
         reminders.add(reminder);
       }
     } catch (error) {
       print("Error fetching reminders: $error");
-      // ... handle error
+      // Handle error
     } finally {
       setState(() => isLoading = false);
     }
@@ -148,53 +157,55 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
 
   void _saveReminder() async {
     if (medicationName.isEmpty || reminderTime == null) {
-      return; // Handle empty medication name or missing reminder time
+      return; // Handle empty fields
     }
 
-    final reminder = PillReminder(
-        medicationName, reminderTime!, frequency); // Create reminder object
+    final reminder = PillReminder(medicationName, reminderTime!, frequency);
     final now = DateTime.now();
     final reminderTimeToSave = DateTime(
         now.year, now.month, now.day, reminderTime!.hour, reminderTime!.minute);
 
-    final id = PillReminder.generateId(); // Generate unique ID
-
+    final id = PillReminder.generateId();
     try {
-      final docRef = await remindersCollection.doc(id).set({
-        // Use generated ID
+      // Use add method on CollectionReference
+      await FirebaseFirestore.instance
+          .collection('pill_reminders') // Access the collection directly
+          .add({
+        'userId': currentUserId, // Include user ID
         "medicationName": reminder.medicationName,
         "reminderTime": reminderTimeToSave.toString(),
         "frequency": reminder.frequency,
       });
-      reminders.add(
-          reminder.copyWith(id: id)); // Update reminder with ID for local list
+      reminders.add(reminder.copyWith(id: id)); // Update local list
       setState(() {
         medicationName = "";
         reminderTime = null;
-        frequency = 1; // Reset frequency for next reminder
+        frequency = 1;
       });
     } catch (error) {
       print("Error saving reminder: $error");
-      // Display user-friendly error message here (e.g., snackbar)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error saving reminder'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      // Handle error (e.g., snackbar)
     }
   }
 
-  void _removeReminder(PillReminder reminder) {
+  void _removeReminder(PillReminder reminder) async {
     final docId = reminder.id;
     if (docId == null) return;
 
-    // Remove the reminder from Firestore
-    remindersCollection.doc(docId).delete().then((_) {
-      reminders.remove(reminder); // Remove by object reference
-      setState(() {});
-    }).catchError(
-        (error) => print("Error removing reminder: $error")); // Handle errors
+    // Access collection directly and use doc with ID
+    try {
+      await FirebaseFirestore.instance
+          .collection('pill_reminders')
+          .doc(docId)
+          .delete()
+          .then((_) {
+        reminders.remove(reminder); // Remove by object reference
+        setState(() {});
+      }).catchError((error) => print("Error removing reminder: $error"));
+    } catch (error) {
+      // Handle potential errors (e.g., network issues)
+      print("Error removing reminder: $error");
+    }
   }
 
   @override

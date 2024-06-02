@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skedmeds/components/navbar.dart';
 
@@ -10,24 +11,42 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _username = "";
   String _password = "";
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/register");
   }
 
-  void _login(BuildContext context) {
-    // Pass context as argument
+  Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print("Username: $_username");
-      print("Password: $_password");
-      // Implement actual registration logic here (e.g., call an API)
 
-      // Navigate to RemindersScreen after successful login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Navbar()),
-      );
+      try {
+        // Attempt to sign in the user with email and password
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+            email: _username, password: _password);
+
+        // User logged in successfully, navigate to RemindersScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Navbar()),
+        );
+      } on FirebaseAuthException catch (error) {
+        if (error.code == 'user-not-found') {
+          print('The user does not exist.');
+          // Show an error message to the user (e.g., using SnackBar)
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("User does not exist. Please register.")));
+        } else if (error.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+          // Show an error message to the user (e.g., using SnackBar)
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Incorrect username or password.")));
+        } else {
+          print(error.code);
+          // Handle other FirebaseAuthException errors (optional)
+        }
+      }
     }
   }
 
@@ -54,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Username field
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: "Username",
+                        labelText: "Email",
                         floatingLabelStyle: TextStyle(color: Colors.teal),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -71,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Please enter your username";
+                          return "Please enter your email";
                         }
                         return null;
                       },

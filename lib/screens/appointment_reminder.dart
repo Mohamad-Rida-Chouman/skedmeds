@@ -248,21 +248,23 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   }
 
   void _removeReminder(int index) async {
-    setState(() {
-      reminders.removeAt(index);
-    });
-
     final id = reminders[index].id;
-    if (id != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('appointments_reminder')
-            .doc(id)
-            .delete();
-      } catch (error) {
-        print("Error removing reminder: $error");
-        // Handle errors (e.g., snackbar)
-      }
+    if (id == null) return;
+
+    try {
+      // Delete from Firestore first
+      await FirebaseFirestore.instance
+          .collection('appointments_reminder')
+          .doc(id)
+          .delete();
+
+      // Then remove from the local list
+      setState(() {
+        reminders.removeAt(index);
+      });
+    } catch (error) {
+      print("Error removing reminder: $error");
+      // Handle errors (e.g., snackbar)
     }
   }
 }

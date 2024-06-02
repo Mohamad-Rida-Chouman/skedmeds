@@ -192,19 +192,20 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
     final docId = reminder.id;
     if (docId == null) return;
 
-    // Access collection directly and use doc with ID
     try {
+      // Delete from Firestore first
       await FirebaseFirestore.instance
           .collection('pill_reminders')
           .doc(docId)
-          .delete()
-          .then((_) {
-        reminders.remove(reminder); // Remove by object reference
-        setState(() {});
-      }).catchError((error) => print("Error removing reminder: $error"));
+          .delete();
+
+      // Then remove from the local list
+      setState(() {
+        reminders.remove(reminder);
+      });
     } catch (error) {
-      // Handle potential errors (e.g., network issues)
       print("Error removing reminder: $error");
+      // Handle errors (e.g., snackbar)
     }
   }
 

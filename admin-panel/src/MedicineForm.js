@@ -1,79 +1,53 @@
 import React, { useState } from "react";
-import {
-  doc,
-  updateDoc,
-  addDoc,
-  getFirestore,
-  collection,
-} from "firebase/firestore";
-import { app } from "./firebase"; // Assuming your firebase.js initializes app
 
-const MedicineForm = ({ medicineId, onUpdate }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-
-  const db = getFirestore(app); // Get Firestore instance
-
-  // ... (optional code to fetch medicine details if needed)
+const MedicineForm = ({ medicineId, medicine, onSubmit }) => {
+  const [name, setName] = useState(medicine ? medicine.name : ""); // Pre-fill for edit
+  const [description, setDescription] = useState(
+    medicine ? medicine.description : ""
+  ); // Pre-fill for edit
+  const [price, setPrice] = useState(medicine ? medicine.price : ""); // Pre-fill for edit
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const medicine = { name, description, price };
+    const medicineData = {
+      name,
+      description,
+      price,
+    };
 
-    if (medicineId) {
-      // Update existing medicine
-      await updateDoc(doc(collection(db, "medicines"), medicineId), medicine)
-        .then(() => {
-          console.log("Medicine updated");
-          onUpdate(); // Call callback to indicate update completion
-        })
-        .catch((error) => {
-          console.error("Error updating medicine:", error);
-        });
-    } else {
-      // Add new medicine
-      await addDoc(collection(db, "medicines"), medicine)
-        .then(() => {
-          console.log("Medicine added");
-          onUpdate(); // Call callback to indicate addition completion (optional)
-        })
-        .catch((error) => {
-          console.error("Error adding medicine:", error);
-        });
-    }
+    onSubmit(medicineData); // Call the provided onSubmit function
+
+    // Clear form after submission (optional)
+    setName("");
+    setDescription("");
+    setPrice("");
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>{medicineId ? "Edit Medicine" : "Add Medicine"}</h2>
-      <label>
-        Name:
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Description:
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Price:
-        <input
-          type="text"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-        />
-      </label>
+      <label htmlFor="name">Name:</label>
+      <input
+        type="text"
+        id="name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+      <label htmlFor="description">Description:</label>
+      <textarea
+        id="description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <label htmlFor="price">Price:</label>
+      <input
+        type="number"
+        id="price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
       <button type="submit">{medicineId ? "Update" : "Add"}</button>
     </form>
   );

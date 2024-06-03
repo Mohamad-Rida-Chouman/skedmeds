@@ -1,7 +1,7 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
+  // Replace placeholders with your actual Firebase project configuration details
   apiKey: "AIzaSyAhT1DALG29Y0le1ecE_0FmOB4o7xmzjzE",
   authDomain: "skedmeds-v2.firebaseapp.com",
   projectId: "skedmeds-v2",
@@ -11,6 +11,6 @@ const firebaseConfig = {
   measurementId: "G-YBGWE869QD",
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-export const db = firebase.firestore();
+export { app }; // Export the app instance

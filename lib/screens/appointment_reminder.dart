@@ -33,6 +33,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   String appointmentName = "";
   DateTime? reminderDateTime;
   List<AppointmentReminder> reminders = []; // List to store reminders
+  bool isLoading = false;
 
   // Add a reference to Firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -65,7 +66,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                 onChanged: (value) => setState(() => appointmentName = value),
               ),
               SizedBox(
-                height: 16.0,
+                height: 24.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,6 +99,9 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 8.0,
+              ),
               ElevatedButton(
                 onPressed: _saveReminder,
                 child: Text("Save Reminder"),
@@ -112,29 +116,34 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                 ),
               ),
               SizedBox(height: 16.0), // Add spacing
-              Text(
-                "Reminders:",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              ListView.builder(
-                // Display reminders using ListView.builder
-                shrinkWrap: true, // Prevent list from expanding unnecessarily
-                itemCount: reminders.length,
-                itemBuilder: (context, index) {
-                  final reminder = reminders[index];
-                  return ListTile(
-                    title: Text(reminder.appointmentName),
-                    subtitle: Text(DateFormat.yMd()
-                        .add_jm()
-                        .format(reminder.reminderDateTime)),
-                    // Use DateFormat for user-friendly date/time formatting (optional)
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _removeReminder(index),
-                    ),
-                  );
-                },
-              ),
+              // Text(
+              //   "Reminders:",
+              //   style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              // ),
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : reminders.isEmpty
+                      ? Center(child: Text('No appointments yet'))
+                      : ListView.builder(
+                          // Display reminders using ListView.builder
+                          shrinkWrap:
+                              true, // Prevent list from expanding unnecessarily
+                          itemCount: reminders.length,
+                          itemBuilder: (context, index) {
+                            final reminder = reminders[index];
+                            return ListTile(
+                              title: Text(reminder.appointmentName),
+                              subtitle: Text(DateFormat.yMd()
+                                  .add_jm()
+                                  .format(reminder.reminderDateTime)),
+                              // Use DateFormat for user-friendly date/time formatting (optional)
+                              trailing: IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () => _removeReminder(index),
+                              ),
+                            );
+                          },
+                        ),
             ],
           ),
         ),
@@ -180,6 +189,7 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   }
 
   void _fetchReminders() async {
+    setState(() => isLoading = true);
     final currentUserId =
         FirebaseAuth.instance.currentUser?.uid; // Get current user ID
 
@@ -215,6 +225,8 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
     } catch (error) {
       print("Error fetching appointments: $error");
       // Handle errors (e.g., snackbar)
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 

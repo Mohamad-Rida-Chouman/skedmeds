@@ -8,71 +8,69 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase"; // Assuming your firebase.js initializes app
-import MedicineForm from "./MedicineForm";
+import { app } from "./firebase"; // Import Firebase instance
+import PostForm from "./PostForm"; // Import your PostForm component
 import Modal from "./Modal"; // Import your Modal component
 
-const MedicineList = () => {
-  const [medicines, setMedicines] = useState([]);
+const PostList = () => {
+  const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Track loading state
-  const [editMedicineId, setEditMedicineId] = useState(null); // Add state for editMedicineId
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State for add modal
+  const [editPostId, setEditPostId] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const db = getFirestore(app); // Get Firestore instance
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "medicines"), (snapshot) => {
-      const medicineData = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(collection(db, "posts"), (snapshot) => {
+      const postData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setMedicines(medicineData);
+      setPosts(postData);
       setIsLoading(false); // Set loading state to false after data arrives
     });
 
     return () => unsubscribe(); // Cleanup function to unsubscribe on unmount
   }, [db]);
 
-  const handleDeleteMedicine = (id) => {
-    const medicineDocRef = doc(collection(db, "medicines"), id);
-    deleteDoc(medicineDocRef)
-      .then(() => {
-        console.log("Medicine deleted");
-        // Update medicines state to reflect deletion (optional optimization)
-        setMedicines(medicines.filter((medicine) => medicine.id !== id));
-      })
-      .catch((error) => {
-        console.error("Error deleting medicine:", error);
-      });
-  };
-
-  const handleEditMedicine = (id) => {
-    setEditMedicineId(id); // Set editMedicineId when edit button is clicked
-  };
-
-  const handleAddMedicine = async (medicine) => {
+  const handleDeletePost = async (id) => {
+    const postDocRef = doc(collection(db, "posts"), id);
     try {
-      await addDoc(collection(db, "medicines"), medicine);
-      console.log("Medicine added");
-      setEditMedicineId(null); // Clear editMedicineId after successful addition
+      await deleteDoc(postDocRef);
+      console.log("Post deleted");
+      setPosts(posts.filter((post) => post.id !== id));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleEditPost = (id) => {
+    setEditPostId(id); // Set editPostId when edit button is clicked
+  };
+
+  const handleAddPost = async (post) => {
+    try {
+      await addDoc(collection(db, "posts"), post);
+      console.log("Post added");
+      setEditPostId(null); // Clear edit state after successful addition
       setIsAddModalOpen(false); // Close add modal after successful addition
     } catch (error) {
-      console.error("Error adding medicine:", error);
+      console.error("Error adding post:", error);
     }
   };
 
-  const handleUpdateMedicine = async (medicine) => {
-    if (!medicine.id) {
-      console.error("Error: Missing medicine ID for update");
-      return; // Exit the function if medicineId is missing
+  const handleUpdatePost = async (post) => {
+    if (!post.id) {
+      console.error("Error: Missing post ID for update");
+      return; // Exit the function if postId is missing
     }
-    const medicineDocRef = doc(collection(db, "medicines"), medicine.id);
+    const postDocRef = doc(collection(db, "posts"), post.id);
     try {
-      await updateDoc(medicineDocRef, medicine);
-      console.log("Medicine updated");
-      setEditMedicineId(null); // Clear editMedicineId after successful update
+      await updateDoc(postDocRef, post);
+      console.log("Post updated");
+      setEditPostId(null); // Clear edit state after successful update
     } catch (error) {
-      console.error("Error updating medicine:", error);
+      console.error("Error updating post:", error);
     }
   };
 
@@ -94,7 +92,7 @@ const MedicineList = () => {
     addButton: {
       backgroundColor: "#a5d6a7", // Light green button for adding
       color: "#fff", // White text
-      marginBottom: 15, // Add some margin below the button
+      marginBottom: 15,
     },
     table: {
       width: "100%",
@@ -125,63 +123,62 @@ const MedicineList = () => {
 
   return (
     <div style={styles.container}>
-      <h2>Medicine List</h2>
+      <h2>Posts</h2>
       <button
         style={{ ...styles.button, ...styles.addButton }}
         onClick={() => setIsAddModalOpen(true)}
       >
-        Add Medicine
+        Add Post
       </button>
       {isAddModalOpen && (
         <Modal onClose={() => setIsAddModalOpen(false)}>
-          <MedicineForm onSubmit={handleAddMedicine} />{" "}
-          {/* Pass MedicineForm */}
+          <PostForm onSubmit={handleAddPost} /> {/* Pass PostForm */}
         </Modal>
       )}
 
-      {editMedicineId && ( // Check if editMedicineId has a value (edit button clicked)
-        <Modal onClose={() => setEditMedicineId(null)}>
+      {editPostId && ( // Check if editPostId has a value (edit button clicked)
+        <Modal onClose={() => setEditPostId(null)}>
           {" "}
           {/* Close modal on close */}
-          <MedicineForm
+          <PostForm
             isEdit={true} // Set isEdit prop to true for edit functionality
-            medicineId={editMedicineId}
-            medicine={medicines.find(
-              (medicine) => medicine.id === editMedicineId
-            )} // Find medicine to edit
-            onSubmit={handleUpdateMedicine} // Pass handleUpdateMedicine for editing
+            postId={editPostId}
+            post={posts.find((post) => post.id === editPostId)} // Find Post to edit
+            onSubmit={handleUpdatePost} // Pass handleUpdatePost for editing
           />
         </Modal>
       )}
       {isLoading ? (
-        <p>Loading medicines...</p>
+        <p>Loading posts...</p>
       ) : (
         <table style={styles.table}>
           <thead>
             <tr>
-              <th style={styles.tableHeader}>Name</th>
-              <th style={styles.tableHeader}>Description</th>
-              <th style={styles.tableHeader}>Price</th>
+              {/* Adjust headers based on your post data model */}
+              <th style={styles.tableHeader}>Title</th>
+              <th style={styles.tableHeader}>Content</th>
               <th style={styles.tableHeader}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {medicines.map((medicine) => (
-              <tr key={medicine.id}>
-                <td style={styles.tableData}>{medicine.name}</td>
-                <td style={styles.tableData}>{medicine.description}</td>
-                <td style={styles.tableData}>{medicine.price}</td>
+            {posts.map((post) => (
+              <tr key={post.id}>
+                {/* Render post data in table cells */}
+                <td style={styles.tableData}>{post.title}</td>
+                <td style={styles.tableData}>{post.content}</td>{" "}
+                {/* Show excerpt */}
+                {/* Render post data in table cells */}
                 <td style={styles.tableData}>
                   <div style={styles.actions}>
                     <button
                       style={{ ...styles.button, ...styles.editButton }}
-                      onClick={() => handleEditMedicine(medicine.id)}
+                      onClick={() => handleEditPost(post.id)}
                     >
                       Edit
                     </button>
                     <button
                       style={{ ...styles.button, ...styles.deleteButton }}
-                      onClick={() => handleDeleteMedicine(medicine.id)}
+                      onClick={() => handleDeletePost(post.id)}
                     >
                       Delete
                     </button>
@@ -196,4 +193,4 @@ const MedicineList = () => {
   );
 };
 
-export default MedicineList;
+export default PostList;

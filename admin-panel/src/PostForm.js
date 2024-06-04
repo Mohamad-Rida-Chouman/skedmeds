@@ -1,32 +1,27 @@
 import React, { useState, useRef } from "react";
 
-const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
-  const [name, setName] = useState(medicine ? medicine.name : ""); // Pre-fill for edit
-  const [description, setDescription] = useState(
-    medicine ? medicine.description : ""
-  ); // Pre-fill for edit
-  const [price, setPrice] = useState(medicine ? medicine.price : ""); // Pre-fill for edit
+const PostForm = ({ postId, post, isEdit, onSubmit }) => {
+  const [title, setTitle] = useState(post ? post.title : ""); // Pre-fill for edit
+  const [content, setContent] = useState(post ? post.content : ""); // Pre-fill for edit
   // const buttonRef = useRef(null); // Reference for button hover effect
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const medicineData = {
-      name,
-      description,
-      price,
+    const postData = {
+      title,
+      content,
     };
 
     if (isEdit) {
-      medicineData.id = medicine.id; // Include id for update
+      postData.id = post.id; // Include id for update
     }
 
-    onSubmit(medicineData); // Call onSubmit with updated data
+    onSubmit(postData); // Call onSubmit with updated data
 
     // Clear form after submission (optional)
-    setName("");
-    setDescription("");
-    setPrice("");
+    setTitle("");
+    setContent("");
   };
 
   const buttonRef = useRef(null); // Reference for button hover effect
@@ -64,37 +59,28 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} style={formStyles.container}>
-      <h2>{isEdit ? "Edit Medicine" : "Add Medicine"}</h2>
-      <label style={formStyles.label} htmlFor="name">
-        Name:
+      <h2>{isEdit ? "Edit post" : "Add post"}</h2>
+      <label style={formStyles.label} htmlFor="title">
+        Title:
       </label>
       <input
         type="text"
-        id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        id="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         required
         style={formStyles.input}
       />
-      <label style={formStyles.label} htmlFor="description">
-        Description:
+      <label style={formStyles.label} htmlFor="content">
+        Content:
       </label>
       <textarea
-        id="description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        style={{ ...formStyles.input, ...formStyles.descriptionInput }}
+        id="content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        style={{ ...formStyles.input, ...formStyles.contentInput }}
       />
-      <label style={formStyles.label} htmlFor="price">
-        Price:
-      </label>
-      <input
-        type="number"
-        id="price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        style={formStyles.input}
-      />
+
       <button type="submit" ref={buttonRef} style={formStyles.button}>
         {isEdit ? "Update" : "Add"}
       </button>
@@ -102,4 +88,4 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
   );
 };
 
-export default MedicineForm;
+export default PostForm;

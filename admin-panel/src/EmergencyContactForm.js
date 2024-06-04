@@ -1,32 +1,36 @@
 import React, { useState, useRef } from "react";
 
-const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
-  const [name, setName] = useState(medicine ? medicine.name : ""); // Pre-fill for edit
-  const [description, setDescription] = useState(
-    medicine ? medicine.description : ""
+const EmergencyContactForm = ({
+  emergencyId,
+  emergencyContact,
+  isEdit,
+  onSubmit,
+}) => {
+  const [type, setType] = useState(
+    emergencyContact ? emergencyContact.type : ""
   ); // Pre-fill for edit
-  const [price, setPrice] = useState(medicine ? medicine.price : ""); // Pre-fill for edit
+  const [phone_number, setPhoneNumber] = useState(
+    emergencyContact ? emergencyContact.phone_number : ""
+  ); // Pre-fill for edit
   // const buttonRef = useRef(null); // Reference for button hover effect
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const medicineData = {
-      name,
-      description,
-      price,
+    const emergencyContactData = {
+      type,
+      phone_number,
     };
 
     if (isEdit) {
-      medicineData.id = medicine.id; // Include id for update
+      emergencyContactData.id = emergencyContact.id; // Include id for update
     }
 
-    onSubmit(medicineData); // Call onSubmit with updated data
+    onSubmit(emergencyContactData); // Call onSubmit with updated data
 
     // Clear form after submission (optional)
-    setName("");
-    setDescription("");
-    setPrice("");
+    setType("");
+    setPhoneNumber("");
   };
 
   const buttonRef = useRef(null); // Reference for button hover effect
@@ -64,37 +68,29 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} style={formStyles.container}>
-      <h2>{isEdit ? "Edit Medicine" : "Add Medicine"}</h2>
-      <label style={formStyles.label} htmlFor="name">
-        Name:
+      <h2>{isEdit ? "Edit emergency contact" : "Add emergency contact"}</h2>
+      <label style={formStyles.label} htmlFor="type">
+        Type:
       </label>
       <input
         type="text"
-        id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        id="type"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
         required
         style={formStyles.input}
       />
-      <label style={formStyles.label} htmlFor="description">
-        Description:
-      </label>
-      <textarea
-        id="description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        style={{ ...formStyles.input, ...formStyles.descriptionInput }}
-      />
-      <label style={formStyles.label} htmlFor="price">
-        Price:
+      <label style={formStyles.label} htmlFor="phone_number">
+        Number:
       </label>
       <input
         type="number"
-        id="price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        style={formStyles.input}
+        id="phone_number"
+        value={phone_number}
+        onChange={(e) => setPhoneNumber(e.target.value)}
+        style={{ ...formStyles.input, ...formStyles.numberInput }}
       />
+
       <button type="submit" ref={buttonRef} style={formStyles.button}>
         {isEdit ? "Update" : "Add"}
       </button>
@@ -102,4 +98,4 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
   );
 };
 
-export default MedicineForm;
+export default EmergencyContactForm;

@@ -165,7 +165,7 @@ const PostList = () => {
               <tr key={post.id}>
                 {/* Render post data in table cells */}
                 <td style={styles.tableData}>{post.title}</td>
-                <td style={styles.tableData}>{post.content}</td>{" "}
+                <td style={styles.tableData}>{post.content}</td>
                 {/* Show excerpt */}
                 {/* Render post data in table cells */}
                 <td style={styles.tableData}>

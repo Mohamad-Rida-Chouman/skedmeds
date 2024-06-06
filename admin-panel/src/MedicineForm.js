@@ -29,6 +29,11 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
     setPrice("");
   };
 
+  const handleChangePrice = (e) => {
+    const priceAsNumber = parseFloat(e.target.value);
+    setPrice(priceAsNumber);
+  };
+
   const buttonRef = useRef(null); // Reference for button hover effect
 
   const formStyles = {
@@ -92,7 +97,7 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
         type="number"
         id="price"
         value={price}
-        onChange={(e) => setPrice(e.target.value)}
+        onChange={handleChangePrice}
         style={formStyles.input}
       />
       <button type="submit" ref={buttonRef} style={formStyles.button}>

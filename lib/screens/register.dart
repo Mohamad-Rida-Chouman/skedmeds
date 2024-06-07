@@ -10,7 +10,6 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _username = "";
   String _email = "";
   String _password = "";
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:skedmeds/components/navbar.dart';
+import 'package:connectivity/connectivity.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,30 +19,55 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login(BuildContext context) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      // Show snackbar for no internet connection
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No internet connection. Please try again.'),
+        ),
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       try {
-        // Attempt to sign in the user with email and password
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
             email: _username, password: _password);
 
-        // User logged in successfully, navigate to RemindersScreen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Navbar()),
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Welcome Back!'),
+            duration: Duration(seconds: 2), // Set snackbar duration (optional)
+          ),
         );
+
+        // Navigate to main screen after a delay
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Navbar()),
+          );
+        });
       } on FirebaseAuthException catch (error) {
-        if (error.code == 'user-not-found') {
-          print('The user does not exist.');
-          // Show an error message to the user (e.g., using SnackBar)
+        if (error.code == 'invalid-email') {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("User does not exist. Please register.")));
-        } else if (error.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-          // Show an error message to the user (e.g., using SnackBar)
+            SnackBar(
+              content:
+                  Text("Invalid email. Please check your email or register."),
+            ),
+          );
+          // Show snackbar for user not found
+        } else if (error.code == 'invalid-credential') {
+          // Show snackbar for incorrect credentials
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Incorrect username or password.")));
+            SnackBar(
+              content: Text("Incorrect password."),
+            ),
+          );
         } else {
           print(error.code);
           // Handle other FirebaseAuthException errors (optional)
@@ -117,12 +143,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter your password";
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return "Please enter your password";
+                      //   }
+                      //   return null;
+                      // },
                       onSaved: (newValue) => _password = newValue!,
                     ),
                     SizedBox(height: 20.0),

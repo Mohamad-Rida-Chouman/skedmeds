@@ -13,12 +13,17 @@ class _LoginScreenState extends State<LoginScreen> {
   String _username = "";
   String _password = "";
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
+  bool _isLoading = false; // Flag to indicate login in progress
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/register");
   }
 
   Future<void> _login(BuildContext context) async {
+    setState(() {
+      _isLoading = true; // Show activity indicator on login attempt
+    });
+
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       // Show snackbar for no internet connection
@@ -27,6 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text('No internet connection. Please try again.'),
         ),
       );
+      setState(() {
+        _isLoading = false; // Hide activity indicator
+      });
       return;
     }
 
@@ -35,13 +43,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-            email: _username, password: _password);
+          email: _username,
+          password: _password,
+        );
 
-        // Show success snackbar
+        // Login successful
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Welcome Back!'),
-            duration: Duration(seconds: 2), // Set snackbar duration (optional)
+            duration: Duration(seconds: 2),
           ),
         );
 
@@ -53,25 +63,28 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
       } on FirebaseAuthException catch (error) {
-        if (error.code == 'invalid-email') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text("Invalid email. Please check your email or register."),
-            ),
-          );
-          // Show snackbar for user not found
-        } else if (error.code == 'invalid-credential') {
-          // Show snackbar for incorrect credentials
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Incorrect password."),
-            ),
-          );
-        } else {
-          print(error.code);
-          // Handle other FirebaseAuthException errors (optional)
+        String errorMessage = "";
+        switch (error.code) {
+          case 'invalid-credential':
+            errorMessage =
+                'Login failed. Please check your email and password.';
+            break;
+          case 'too-many-requests':
+            errorMessage = 'Too many login attempts. Please try again later.';
+            break;
+          default:
+            errorMessage = 'An error occurred. Please try again.';
         }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false; // Hide activity indicator after login attempt
+        });
       }
     }
   }

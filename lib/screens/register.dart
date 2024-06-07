@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:skedmeds/components/navbar.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -18,27 +20,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _register() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      // Show snackbar for no internet connection
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No internet connection. Please try again.'),
+        ),
+      );
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       try {
-        // Create a new user with email and password
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: _email, password: _password);
 
-        // Handle successful registration (optional)
-        print("User registered successfully: ${userCredential.user!.uid}");
-        // You can navigate to another screen or show a success message here
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Welcome to Skedmeds!'),
+            duration: Duration(seconds: 2), // Set snackbar duration (optional)
+          ),
+        );
 
-        // Optionally send email verification (uncomment to enable)
-        // await userCredential.user!.sendEmailVerification();
-        // print("Email verification link sent");
+        // Navigate to main screen after a delay
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Navbar()),
+          );
+        });
       } on FirebaseAuthException catch (error) {
         if (error.code == 'weak-password') {
           print('The password provided is too weak.');
           // Show an error message to the user (e.g., using SnackBar)
         } else if (error.code == 'email-already-in-use') {
-          print('The account already exists for that email.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('User already exists!'),
+            ),
+          );
+
           // Show an error message to the user
         } else {
           print(error.code);
@@ -72,27 +96,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Username field - currently not used for registration with Firebase Auth
-                      // TextFormField(
-                      //   decoration: InputDecoration(
-                      //     labelText: "Username",
-                      //     floatingLabelStyle: TextStyle(color: Colors.teal),
-                      //     enabledBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //       ),
-                      //     ),
-                      //   ),
-                      //   // Consider using username later for display purposes or other functionalities
-                      //   // onSaved: (newValue) => _username = newValue!,
-                      // ),
-                      // SizedBox(height: 10.0),
-
                       // Email field
                       TextFormField(
                         decoration: InputDecoration(
@@ -111,17 +114,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
+                            // Show snackbar for empty email
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please enter your email'),
+                              ),
+                            );
                             return "Please enter your email";
                           } else if (!RegExp(
                                   r"^[a-zA-Z0-9.a-z.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$")
                               .hasMatch(value)) {
+                            // Show snackbar for invalid email format
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please enter a valid email'),
+                              ),
+                            );
                             return "Please enter a valid email";
                           }
                           return null;
                         },
                         onSaved: (newValue) => _email = newValue!,
                       ),
-                      SizedBox(height: 10.0),
 
                       TextFormField(
                         decoration: InputDecoration(
@@ -140,8 +154,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
+                            // Show snackbar for empty password
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please enter your password'),
+                              ),
+                            );
                             return "Please enter your password";
                           } else if (value.length < 6) {
+                            // Show snackbar for short password
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Password must be at least 6 characters'),
+                              ),
+                            );
                             return "Password must be at least 6 characters";
                           }
                           return null;
@@ -149,6 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         onSaved: (newValue) => _password = newValue!,
                       ),
+
                       SizedBox(height: 20.0),
 
                       // Register button

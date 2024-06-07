@@ -40,7 +40,6 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   final medicinesCollection =
       FirebaseFirestore.instance.collection("medicines");
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // final String _cartCollectionName = "carts"; // Name of cart collection
 
   final _cartItems = <Item>[]; // Cart items list
   double _totalPrice = 0.0; // Total price
@@ -57,38 +56,16 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     final user = _auth.currentUser;
     if (user != null) {
       // Get cart document reference based on user ID
-      final cartRef = _getCartReference(user.uid); // Replace with your logic
-
-      // Optional: Attach listener for cart updates from other devices
-      // This requires additional logic to handle updates
-      // streamSubscription = cartRef.snapshots().listen((snapshot) {
-      //   if (snapshot.exists) {
-      //     final data = snapshot.data()!;
-      //     _cartItems.clear();
-      //     _cartItems.addAll(
-      //         (data['items'] as List).map((item) => Item.fromFirestore(item)).toList());
-      //     _calculateTotalPrice(); // Recalculate total price on cart update
-      //     setState(() {}); // Trigger rebuild after updating cart
-      //   }
-      // });
+      final cartRef = _getCartReference(user.uid);
     } else {
       print("No user signed in, cart persistence unavailable.");
     }
   }
 
   DocumentReference<Map<String, dynamic>> _getCartReference(String userId) {
-    // Choose the approach that best suits your application's data structure and access needs:
-
-    // 1. Subcollection within the user document:
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('cart')
-        .doc();
-
-    // 2. Separate collection with a unique identifier for each cart:
-    // final cartId = '${Uuid().v4()}';  // Consider using a more robust method
-    // return FirebaseFirestore.instance.collection('carts').doc(cartId);
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final cartId = currentUserId;
+    return FirebaseFirestore.instance.collection('carts').doc(cartId);
   }
 
   void _fetchData() async {
@@ -151,7 +128,6 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       return;
     }
 
-    // Get cart document reference based on user ID (replace with your logic)
     final cartRef = _getCartReference(user.uid);
 
     final docSnapshot = await cartRef.get();

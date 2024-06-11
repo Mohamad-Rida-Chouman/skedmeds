@@ -12,8 +12,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _username = "";
   String _password = "";
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
-  bool _isLoading = false; // Flag to indicate login in progress
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/register");
@@ -21,19 +21,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login(BuildContext context) async {
     setState(() {
-      _isLoading = true; // Show activity indicator on login attempt
+      _isLoading = true;
     });
 
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      // Show snackbar for no internet connection
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('No internet connection. Please try again.'),
         ),
       );
       setState(() {
-        _isLoading = false; // Hide activity indicator
+        _isLoading = false;
       });
       return;
     }
@@ -47,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _password,
         );
 
-        // Login successful
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Welcome Back!'),
@@ -55,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
 
-        // Navigate to main screen after a delay
         Future.delayed(Duration(seconds: 2), () {
           Navigator.pushReplacement(
             context,
@@ -83,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } finally {
         setState(() {
-          _isLoading = false; // Hide activity indicator after login attempt
+          _isLoading = false;
         });
       }
     }
@@ -98,32 +95,27 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title (optional)
               Text(
                 "Skedmeds",
                 style: TextStyle(fontSize: 30.0),
               ),
               SizedBox(height: 20.0),
-
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    // Username field
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: "Email",
                         floatingLabelStyle: TextStyle(color: Colors.teal),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .primaryColor, // Use theme's blue color
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .primaryColor, // Use theme's blue color
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
@@ -136,56 +128,39 @@ class _LoginScreenState extends State<LoginScreen> {
                       onSaved: (newValue) => _username = newValue!,
                     ),
                     SizedBox(height: 10.0),
-
-                    // Password field
                     TextFormField(
                       decoration: InputDecoration(
                         labelText: "Password",
                         floatingLabelStyle: TextStyle(color: Colors.teal),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .primaryColor, // Use theme's blue color
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .primaryColor, // Use theme's blue color
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       ),
                       obscureText: true,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return "Please enter your password";
-                      //   }
-                      //   return null;
-                      // },
                       onSaved: (newValue) => _password = newValue!,
                     ),
                     SizedBox(height: 20.0),
-
-                    // Login button
                     ElevatedButton(
-                      onPressed: () =>
-                          _login(context), // Call _login with context
+                      onPressed: () => _login(context),
                       child: Text("Login"),
                       style: TextButton.styleFrom(
-                        foregroundColor:
-                            Colors.white, // Text color for button (optional)
+                        foregroundColor: Colors.white,
                         backgroundColor: Color(0xFF38B3CD),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(4.0), // Set rounded corners
+                          borderRadius: BorderRadius.circular(4.0),
                         ),
                       ),
                     )
                   ],
                 ),
               ),
-
-              // Text with clickable "Register"
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

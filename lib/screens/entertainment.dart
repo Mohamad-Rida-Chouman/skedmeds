@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:math'; // Import the math library for Random
+import 'dart:math';
 
 class EntertainmentScreen extends StatefulWidget {
   @override
@@ -8,7 +8,7 @@ class EntertainmentScreen extends StatefulWidget {
 }
 
 class _EntertainmentScreenState extends State<EntertainmentScreen> {
-  Map<String, dynamic>? post; // Store the fetched random post
+  Map<String, dynamic>? post;
 
   final firestoreInstance = FirebaseFirestore.instance;
   final postsCollection = FirebaseFirestore.instance.collection("posts");
@@ -40,28 +40,25 @@ class _EntertainmentScreenState extends State<EntertainmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // Center the entire Scaffold content
         child: Padding(
-          padding: const EdgeInsets.all(16.0), // Maintain some padding
+          padding: const EdgeInsets.all(16.0),
           child: post == null
               ? Text(
                   'Loading...',
-                  style:
-                      TextStyle(fontSize: 16.0), // Adjust loading message style
-                ) // Display loading message while fetching data
+                  style: TextStyle(fontSize: 16.0),
+                )
               : Center(
-                  // Center the Column containing the post
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Avoid unnecessary space
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         post!['title']!,
                         style: TextStyle(
                             fontSize: 20.0, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 16.0), // Add spacing
+                      SizedBox(height: 16.0),
                       Text(post!['content']!),
-                      Divider(), // Add divider between posts (optional)
+                      Divider(),
                     ],
                   ),
                 ),

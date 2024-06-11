@@ -4,14 +4,14 @@ const Modal = ({ children, onClose }) => {
   const styles = {
     modal: {
       position: "fixed",
-      top: 50, // Adjust vertical centering as needed
+      top: 50,
       left: "50%",
       transform: "translate(-50%)",
       backgroundColor: "#fff",
       padding: 20,
       borderRadius: 5,
       boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-      zIndex: 10, // Ensure modal has higher stacking context
+      zIndex: 10,
     },
     overlay: {
       position: "fixed",
@@ -20,7 +20,7 @@ const Modal = ({ children, onClose }) => {
       right: 0,
       bottom: 0,
       backgroundColor: "rgba(0, 0, 0, 0.3)",
-      zIndex: 9, // Set slightly lower than modal
+      zIndex: 9,
     },
     closeButton: {
       position: "absolute",
@@ -30,8 +30,8 @@ const Modal = ({ children, onClose }) => {
     },
     formGroup: {
       marginBottom: 15,
-      display: "flex", // Use flexbox for horizontal layout
-      flexDirection: "column", // Arrange fields vertically
+      display: "flex",
+      flexDirection: "column",
     },
   };
 
@@ -40,7 +40,7 @@ const Modal = ({ children, onClose }) => {
       <div style={styles.overlay} onClick={onClose} />
       <div style={styles.modal}>
         <button style={styles.closeButton} onClick={onClose}>
-          &#x2716; {/* Close icon using Unicode character */}
+          &#x2716;
         </button>
         {children}
       </div>

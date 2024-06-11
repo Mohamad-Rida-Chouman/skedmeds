@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Optional for date formatting
-import 'package:uuid/uuid.dart'; // For generating unique IDs
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class PillReminder {
   final String medicationName;
@@ -13,26 +13,21 @@ class PillReminder {
   PillReminder(this.medicationName, this.reminderTime, this.frequency,
       {this.id});
 
-  // Function to calculate the next alarm time for today
   DateTime getNextAlarmToday() {
     final now = DateTime.now();
     final scheduledTime = DateTime(
         now.year, now.month, now.day, reminderTime.hour, reminderTime.minute);
 
-    // Check if scheduled time has already passed for today
     if (scheduledTime.isBefore(now)) {
-      // If yes, calculate next occurrence based on frequency
       final timeDifference = Duration(hours: 24 ~/ frequency);
       return scheduledTime.add(timeDifference);
     } else {
-      // Otherwise, return the scheduled time for today
       return scheduledTime;
     }
   }
 
   static String generateId() => Uuid().v4();
 
-  // Added copyWith method
   PillReminder copyWith({
     String? medicationName,
     TimeOfDay? reminderTime,
@@ -107,26 +102,22 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchReminders(); // Fetch again on screen activation
+    _fetchReminders();
   }
 
-  // Get the current user ID from Firebase Authentication
   String get currentUserId => FirebaseAuth.instance.currentUser!.uid;
 
   Query<Map<String, dynamic>> getUserRemindersCollection() {
-    // Add the where clause to filter by current user ID
     return remindersCollection.where('userId', isEqualTo: currentUserId);
   }
 
   void _fetchReminders() async {
     setState(() => isLoading = true);
     try {
-      final snapshot =
-          await getUserRemindersCollection().get(); // Get documents
+      final snapshot = await getUserRemindersCollection().get();
       reminders.clear();
       for (final doc in snapshot.docs) {
-        // Loop through documents
-        final reminderMap = doc.data() as Map<String, dynamic>; // Extract data
+        final reminderMap = doc.data() as Map<String, dynamic>;
         final reminderTime = DateTime.parse(reminderMap["reminderTime"]);
         final reminder = PillReminder(
           reminderMap["medicationName"],
@@ -138,7 +129,6 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
       }
     } catch (error) {
       print("Error fetching reminders: $error");
-      // Handle error
     } finally {
       setState(() => isLoading = false);
     }
@@ -157,7 +147,7 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
 
   void _saveReminder() async {
     if (medicationName.isEmpty || reminderTime == null) {
-      return; // Handle empty fields
+      return;
     }
 
     final reminder = PillReminder(medicationName, reminderTime!, frequency);
@@ -167,16 +157,13 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
 
     final id = PillReminder.generateId();
     try {
-      // Use add method on CollectionReference
-      await FirebaseFirestore.instance
-          .collection('pill_reminders') // Access the collection directly
-          .add({
-        'userId': currentUserId, // Include user ID
+      await FirebaseFirestore.instance.collection('pill_reminders').add({
+        'userId': currentUserId,
         "medicationName": reminder.medicationName,
         "reminderTime": reminderTimeToSave.toString(),
         "frequency": reminder.frequency,
       });
-      reminders.add(reminder.copyWith(id: id)); // Update local list
+      reminders.add(reminder.copyWith(id: id));
       setState(() {
         medicationName = "";
         reminderTime = null;
@@ -184,7 +171,6 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
       });
     } catch (error) {
       print("Error saving reminder: $error");
-      // Handle error (e.g., snackbar)
     }
   }
 
@@ -193,19 +179,16 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
     if (docId == null) return;
 
     try {
-      // Delete from Firestore first
       await FirebaseFirestore.instance
           .collection('pill_reminders')
           .doc(docId)
           .delete();
 
-      // Then remove from the local list
       setState(() {
         reminders.remove(reminder);
       });
     } catch (error) {
       print("Error removing reminder: $error");
-      // Handle errors (e.g., snackbar)
     }
   }
 
@@ -255,7 +238,6 @@ class _PillReminderScreenState extends State<PillReminderScreen> {
                       DropdownMenuItem(value: 1, child: Text("Once")),
                       DropdownMenuItem(value: 2, child: Text("Twice")),
                       DropdownMenuItem(value: 3, child: Text("Three times")),
-                      // ... add more options for higher frequencies
                     ],
                     onChanged: (value) => setState(() => frequency = value!),
                   ),

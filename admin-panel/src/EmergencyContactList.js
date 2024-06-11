@@ -8,17 +8,17 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase"; // Import Firebase instance
+import { app } from "./firebase";
 import EmergencyContactForm from "./EmergencyContactForm";
-import Modal from "./Modal"; // Import your Modal component
+import Modal from "./Modal";
 
 const EmergencyContactList = () => {
   const [emergencyContacts, setEmergencyContacts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [editEmergencyContactId, setEditEmergencyContactId] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const db = getFirestore(app); // Get Firestore instance
+  const db = getFirestore(app);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -29,11 +29,11 @@ const EmergencyContactList = () => {
           ...doc.data(),
         }));
         setEmergencyContacts(contactData);
-        setIsLoading(false); // Set loading state to false after data arrives
+        setIsLoading(false);
       }
     );
 
-    return () => unsubscribe(); // Cleanup function to unsubscribe on unmount
+    return () => unsubscribe();
   }, [db]);
 
   const handleDeleteEmergencyContact = async (id) => {
@@ -50,15 +50,15 @@ const EmergencyContactList = () => {
   };
 
   const handleEditEmergencyContact = (id) => {
-    setEditEmergencyContactId(id); // Set editEmergencyContactId when edit button is clicked
+    setEditEmergencyContactId(id);
   };
 
   const handleAddEmergencyContact = async (contact) => {
     try {
       await addDoc(collection(db, "emergency_numbers"), contact);
       console.log("Emergency contact added");
-      setEditEmergencyContactId(null); // Clear edit state after successful addition
-      setIsAddModalOpen(false); // Close add modal after successful addition
+      setEditEmergencyContactId(null);
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error("Error adding emergency contact:", error);
     }
@@ -67,13 +67,13 @@ const EmergencyContactList = () => {
   const handleUpdateEmergencyContact = async (contact) => {
     if (!contact.id) {
       console.error("Error: Missing emergency contact ID for update");
-      return; // Exit the function if contactId is missing
+      return;
     }
     const contactDocRef = doc(collection(db, "emergency_numbers"), contact.id);
     try {
       await updateDoc(contactDocRef, contact);
       console.log("Emergency contact updated");
-      setEditEmergencyContactId(null); // Clear edit state after successful update
+      setEditEmergencyContactId(null);
     } catch (error) {
       console.error("Error updating emergency contact:", error);
     }
@@ -81,13 +81,13 @@ const EmergencyContactList = () => {
 
   const styles = {
     container: {
-      backgroundColor: "#f0f8ff", // Light blue background
+      backgroundColor: "#f0f8ff",
       padding: 20,
       borderRadius: 5,
       boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
     },
     button: {
-      backgroundColor: "#e0e8f0", // Light gray button background
+      backgroundColor: "#e0e8f0",
       padding: 10,
       border: "none",
       borderRadius: 5,
@@ -95,9 +95,9 @@ const EmergencyContactList = () => {
       margin: 5,
     },
     addButton: {
-      backgroundColor: "#a5d6a7", // Light green button for adding
-      color: "#fff", // White text
-      marginBottom: 15, // Add some margin below the button
+      backgroundColor: "#a5d6a7",
+      color: "#fff",
+      marginBottom: 15,
     },
     table: {
       width: "100%",
@@ -105,7 +105,7 @@ const EmergencyContactList = () => {
     },
     tableHeader: {
       padding: 10,
-      backgroundColor: "#e0e8f0", // Light gray header background
+      backgroundColor: "#e0e8f0",
       fontWeight: "bold",
     },
     tableData: {
@@ -117,12 +117,12 @@ const EmergencyContactList = () => {
       justifyContent: "space-between",
     },
     editButton: {
-      backgroundColor: "#ffc107", // Light orange button for editing
-      color: "#fff", // White text
+      backgroundColor: "#ffc107",
+      color: "#fff",
     },
     deleteButton: {
-      backgroundColor: "#dc3545", // Light red button for deleting
-      color: "#fff", // White text
+      backgroundColor: "#dc3545",
+      color: "#fff",
     },
   };
 
@@ -141,18 +141,16 @@ const EmergencyContactList = () => {
         </Modal>
       )}
 
-      {editEmergencyContactId && ( // Check if editPostId has a value (edit button clicked)
+      {editEmergencyContactId && (
         <Modal onClose={() => setEditEmergencyContactId(null)}>
-          {" "}
-          {/* Close modal on close */}
           <EmergencyContactForm
-            isEdit={true} // Set isEdit prop to true for edit functionality
+            isEdit={true}
             emergencyContactId={editEmergencyContactId}
             emergencyContact={emergencyContacts.find(
               (emergencyContact) =>
                 emergencyContact.id === editEmergencyContactId
-            )} // Find Post to edit
-            onSubmit={handleUpdateEmergencyContact} // Pass handleUpdatePost for editing
+            )}
+            onSubmit={handleUpdateEmergencyContact}
           />
         </Modal>
       )}

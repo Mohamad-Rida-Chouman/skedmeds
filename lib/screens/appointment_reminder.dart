@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // Optional for date formatting
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore dependency
-import 'package:uuid/uuid.dart'; // For generating unique IDs
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class AppointmentReminder {
-  final String? id; // Added ID field
+  final String? id;
   final String appointmentName;
   final DateTime reminderDateTime;
 
   AppointmentReminder(this.appointmentName, this.reminderDateTime, {this.id});
 
-  static String generateId() => Uuid().v4(); // Static method to generate ID
+  static String generateId() => Uuid().v4();
 
   AppointmentReminder copyWith(
       {String? id, String? appointmentName, DateTime? reminderDateTime}) {
@@ -32,10 +32,9 @@ class AppointmentReminderScreen extends StatefulWidget {
 class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   String appointmentName = "";
   DateTime? reminderDateTime;
-  List<AppointmentReminder> reminders = []; // List to store reminders
+  List<AppointmentReminder> reminders = [];
   bool isLoading = false;
 
-  // Add a reference to Firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -52,14 +51,12 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                   floatingLabelStyle: TextStyle(color: Colors.teal),
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context)
-                          .primaryColor, // Use theme's blue color
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context)
-                          .primaryColor, // Use theme's blue color
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -75,12 +72,10 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                     onPressed: () => _showDatePicker(context),
                     child: Text("Set Date"),
                     style: TextButton.styleFrom(
-                      foregroundColor:
-                          Colors.white, // Text color for button (optional)
+                      foregroundColor: Colors.white,
                       backgroundColor: Color(0xFF38B3CD),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(4.0), // Set rounded corners
+                        borderRadius: BorderRadius.circular(4.0),
                       ),
                     ),
                   ),
@@ -88,12 +83,10 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                     onPressed: () => _showTimePicker(context),
                     child: Text("Set Time"),
                     style: TextButton.styleFrom(
-                      foregroundColor:
-                          Colors.white, // Text color for button (optional)
+                      foregroundColor: Colors.white,
                       backgroundColor: Color(0xFF38B3CD),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(4.0), // Set rounded corners
+                        borderRadius: BorderRadius.circular(4.0),
                       ),
                     ),
                   ),
@@ -106,28 +99,20 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                 onPressed: _saveReminder,
                 child: Text("Save Reminder"),
                 style: TextButton.styleFrom(
-                  foregroundColor:
-                      Colors.white, // Text color for button (optional)
+                  foregroundColor: Colors.white,
                   backgroundColor: Color(0xFF38B3CD),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(4.0), // Set rounded corners
+                    borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
               ),
-              SizedBox(height: 16.0), // Add spacing
-              // Text(
-              //   "Reminders:",
-              //   style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              // ),
+              SizedBox(height: 16.0),
               isLoading
                   ? Center(child: CircularProgressIndicator())
                   : reminders.isEmpty
                       ? Center(child: Text('No appointments yet'))
                       : ListView.builder(
-                          // Display reminders using ListView.builder
-                          shrinkWrap:
-                              true, // Prevent list from expanding unnecessarily
+                          shrinkWrap: true,
                           itemCount: reminders.length,
                           itemBuilder: (context, index) {
                             final reminder = reminders[index];
@@ -136,7 +121,6 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
                               subtitle: Text(DateFormat.yMd()
                                   .add_jm()
                                   .format(reminder.reminderDateTime)),
-                              // Use DateFormat for user-friendly date/time formatting (optional)
                               trailing: IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () => _removeReminder(index),
@@ -185,20 +169,19 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchReminders(); // Fetch reminders on app launch
+    _fetchReminders();
   }
 
   void _fetchReminders() async {
     setState(() => isLoading = true);
-    final currentUserId =
-        FirebaseAuth.instance.currentUser?.uid; // Get current user ID
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
-    if (currentUserId == null) return; // Handle no logged-in user
+    if (currentUserId == null) return;
 
     try {
       final snapshot = await _firestore
           .collection('appointments_reminder')
-          .where('userId', isEqualTo: currentUserId) // Filter by user ID
+          .where('userId', isEqualTo: currentUserId)
           .get();
       reminders.clear();
       for (final doc in snapshot.docs) {
@@ -206,7 +189,6 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
         if (reminderMap != null && reminderMap.containsKey("dateTime")) {
           final reminderString = reminderMap["dateTime"];
           try {
-            // Parse using ISO 8601 format (same as before)
             final reminderDateTime = DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
                 .parseStrict(reminderString);
             final reminder = AppointmentReminder(
@@ -215,16 +197,12 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
             reminders.add(reminder);
           } on FormatException catch (error) {
             print("Error parsing date/time for reminder ${doc.id}: $error");
-            // Handle parsing errors (optional)
           }
-        } else {
-          // Handle cases where data is missing (optional)
-        }
+        } else {}
       }
       setState(() {});
     } catch (error) {
       print("Error fetching appointments: $error");
-      // Handle errors (e.g., snackbar)
     } finally {
       setState(() => isLoading = false);
     }
@@ -232,16 +210,16 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
 
   void _saveReminder() async {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-    if (currentUserId == null) return; // Handle no logged-in user
+    if (currentUserId == null) return;
 
     try {
       final docRef = await FirebaseFirestore.instance
           .collection('appointments_reminder')
           .add({
         'name': appointmentName,
-        'dateTime': DateFormat('yyyy-MM-ddTHH:mm:ss.SSS')
-            .format(reminderDateTime!), // Use ISO 8601 format
-        'userId': currentUserId, // Add userID field
+        'dateTime':
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSS').format(reminderDateTime!),
+        'userId': currentUserId,
       });
 
       setState(() {
@@ -255,7 +233,6 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
       });
     } catch (error) {
       print("Error saving reminder: $error");
-      // Handle errors (e.g., snackbar)
     }
   }
 
@@ -264,19 +241,16 @@ class _AppointmentReminderScreenState extends State<AppointmentReminderScreen> {
     if (id == null) return;
 
     try {
-      // Delete from Firestore first
       await FirebaseFirestore.instance
           .collection('appointments_reminder')
           .doc(id)
           .delete();
 
-      // Then remove from the local list
       setState(() {
         reminders.removeAt(index);
       });
     } catch (error) {
       print("Error removing reminder: $error");
-      // Handle errors (e.g., snackbar)
     }
   }
 }

@@ -15,8 +15,7 @@ const Navbar = () => {
         zIndex: 1,
       }}
     >
-      <h1 style={{ color: "#fff", margin: 0 }}>SkedMeds / Admin Panel</h1>{" "}
-      {/* Added heading */}
+      <h1 style={{ color: "#fff", margin: 0 }}>SkedMeds / Admin Panel</h1>
       <ul style={{ display: "flex", listStyle: "none", margin: 0, padding: 0 }}>
         <li style={{ marginRight: "20px" }}>
           <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>

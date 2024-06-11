@@ -24,13 +24,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       final querySnapshot = await emergencyNumbersCollection.get();
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
-          final emergencyType = doc.data()["type"]; // Assuming a "type" field
-          final phoneNumber =
-              doc.data()["phone_number"]; // Assuming a "phone_number" field
+          final emergencyType = doc.data()["type"];
+          final phoneNumber = doc.data()["phone_number"];
           emergencyNumbers[emergencyType] = phoneNumber;
         }
       } else {
-        // Handle empty data case
         emergencyNumbers["Numbers will be added soon!"] = "stay tuned";
       }
       setState(() {});
@@ -48,14 +46,13 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0), // Add some padding
+              padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height *
-                      0.9, // 90% of screen height
+                  height: MediaQuery.of(context).size.height * 0.9,
                   child: Center(
                     child: ListView.builder(
-                      shrinkWrap: true, // Prevent excessive list expansion
+                      shrinkWrap: true,
                       itemCount: emergencyNumbers.length,
                       itemBuilder: (context, index) {
                         final emergencyType =

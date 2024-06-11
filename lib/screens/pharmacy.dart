@@ -41,21 +41,20 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       FirebaseFirestore.instance.collection("medicines");
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final _cartItems = <Item>[]; // Cart items list
-  double _totalPrice = 0.0; // Total price
+  final _cartItems = <Item>[];
+  double _totalPrice = 0.0;
 
   @override
   void initState() {
     super.initState();
     _getCurrentUser();
     _fetchData();
-    _loadCartItems(); // Load cart items on app launch
+    _loadCartItems();
   }
 
   void _getCurrentUser() async {
     final user = _auth.currentUser;
     if (user != null) {
-      // Get cart document reference based on user ID
       final cartRef = _getCartReference(user.uid);
     } else {
       print("No user signed in, cart persistence unavailable.");
@@ -76,11 +75,9 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           final item = Item.fromFirestore(doc.data());
           _items.add(item);
         }
-        _displayedItems.addAll(_items); // Initially display all medicines
-        setState(() {}); // Trigger rebuild after updating state
-      } else {
-        // Handle empty data case (display a message or placeholder)
-      }
+        _displayedItems.addAll(_items);
+        setState(() {});
+      } else {}
     } catch (error) {
       print("Error fetching medicines: $error");
     }
@@ -90,7 +87,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     setState(() {
       _cartItems.add(item);
       _calculateTotalPrice();
-      _saveCartItems(); // Save cart items to Firestore
+      _saveCartItems();
     });
   }
 
@@ -98,7 +95,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     setState(() {
       _cartItems.remove(item);
       _calculateTotalPrice();
-      _saveCartItems(); // Save cart items to Firestore
+      _saveCartItems();
     });
   }
 
@@ -113,10 +110,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       return;
     }
 
-    // Get cart document reference based on user ID (replace with your logic)
     final cartRef = _getCartReference(user.uid);
 
-    // Convert cart items to a map suitable for Firestore
     final cartData = {'items': _cartItems.map((item) => item.toMap()).toList()};
     await cartRef.set(cartData);
   }
@@ -132,8 +127,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
     final docSnapshot = await cartRef.get();
     if (!docSnapshot.exists) {
-      _cartItems.clear(); // Clear existing items if no cart document found
-      setState(() {}); // Trigger rebuild after updating state
+      _cartItems.clear();
+      setState(() {});
       return;
     }
 
@@ -143,8 +138,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         .toList();
     _cartItems.clear();
     _cartItems.addAll(cartItems);
-    _calculateTotalPrice(); // Recalculate total price on cart load
-    setState(() {}); // Trigger rebuild after updating state
+    _calculateTotalPrice();
+    setState(() {});
   }
 
   @override
@@ -185,7 +180,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         ],
       ),
       body: _items.isEmpty
-          ? Center(child: Text('No medicines found.')) // Handle empty data case
+          ? Center(child: Text('No medicines found.'))
           : ListView.builder(
               itemCount: _displayedItems.length,
               itemBuilder: (context, index) {
@@ -221,8 +216,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             children: [
               Text("Cart Items", style: TextStyle(fontSize: 18.0)),
               Text(
-                "Total: \$" +
-                    _totalPrice.toStringAsFixed(2), // Corrected formatting
+                "Total: \$" + _totalPrice.toStringAsFixed(2),
               ),
             ],
           ),
@@ -236,8 +230,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             return ListTile(
               title: Text(item.name),
               subtitle: Text(
-                "Price: \$" +
-                    item.price.toStringAsFixed(2), // Corrected formatting
+                "Price: \$" + item.price.toStringAsFixed(2),
               ),
               trailing: IconButton(
                 icon: Icon(Icons.delete),

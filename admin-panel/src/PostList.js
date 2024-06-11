@@ -8,17 +8,17 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase"; // Import Firebase instance
-import PostForm from "./PostForm"; // Import your PostForm component
-import Modal from "./Modal"; // Import your Modal component
+import { app } from "./firebase";
+import PostForm from "./PostForm";
+import Modal from "./Modal";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [editPostId, setEditPostId] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const db = getFirestore(app); // Get Firestore instance
+  const db = getFirestore(app);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "posts"), (snapshot) => {
@@ -27,10 +27,10 @@ const PostList = () => {
         ...doc.data(),
       }));
       setPosts(postData);
-      setIsLoading(false); // Set loading state to false after data arrives
+      setIsLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup function to unsubscribe on unmount
+    return () => unsubscribe();
   }, [db]);
 
   const handleDeletePost = async (id) => {
@@ -45,15 +45,15 @@ const PostList = () => {
   };
 
   const handleEditPost = (id) => {
-    setEditPostId(id); // Set editPostId when edit button is clicked
+    setEditPostId(id);
   };
 
   const handleAddPost = async (post) => {
     try {
       await addDoc(collection(db, "posts"), post);
       console.log("Post added");
-      setEditPostId(null); // Clear edit state after successful addition
-      setIsAddModalOpen(false); // Close add modal after successful addition
+      setEditPostId(null);
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error("Error adding post:", error);
     }
@@ -62,13 +62,13 @@ const PostList = () => {
   const handleUpdatePost = async (post) => {
     if (!post.id) {
       console.error("Error: Missing post ID for update");
-      return; // Exit the function if postId is missing
+      return;
     }
     const postDocRef = doc(collection(db, "posts"), post.id);
     try {
       await updateDoc(postDocRef, post);
       console.log("Post updated");
-      setEditPostId(null); // Clear edit state after successful update
+      setEditPostId(null);
     } catch (error) {
       console.error("Error updating post:", error);
     }
@@ -76,13 +76,13 @@ const PostList = () => {
 
   const styles = {
     container: {
-      backgroundColor: "#f0f8ff", // Light blue background
+      backgroundColor: "#f0f8ff",
       padding: 20,
       borderRadius: 5,
       boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
     },
     button: {
-      backgroundColor: "#e0e8f0", // Light gray button background
+      backgroundColor: "#e0e8f0",
       padding: 10,
       border: "none",
       borderRadius: 5,
@@ -90,8 +90,8 @@ const PostList = () => {
       margin: 5,
     },
     addButton: {
-      backgroundColor: "#a5d6a7", // Light green button for adding
-      color: "#fff", // White text
+      backgroundColor: "#a5d6a7",
+      color: "#fff",
       marginBottom: 15,
     },
     table: {
@@ -100,7 +100,7 @@ const PostList = () => {
     },
     tableHeader: {
       padding: 10,
-      backgroundColor: "#e0e8f0", // Light gray header background
+      backgroundColor: "#e0e8f0",
       fontWeight: "bold",
     },
     tableData: {
@@ -112,12 +112,12 @@ const PostList = () => {
       justifyContent: "space-between",
     },
     editButton: {
-      backgroundColor: "#ffc107", // Light orange button for editing
-      color: "#fff", // White text
+      backgroundColor: "#ffc107",
+      color: "#fff",
     },
     deleteButton: {
-      backgroundColor: "#dc3545", // Light red button for deleting
-      color: "#fff", // White text
+      backgroundColor: "#dc3545",
+      color: "#fff",
     },
   };
 
@@ -132,19 +132,17 @@ const PostList = () => {
       </button>
       {isAddModalOpen && (
         <Modal onClose={() => setIsAddModalOpen(false)}>
-          <PostForm onSubmit={handleAddPost} /> {/* Pass PostForm */}
+          <PostForm onSubmit={handleAddPost} />
         </Modal>
       )}
 
-      {editPostId && ( // Check if editPostId has a value (edit button clicked)
+      {editPostId && (
         <Modal onClose={() => setEditPostId(null)}>
-          {" "}
-          {/* Close modal on close */}
           <PostForm
-            isEdit={true} // Set isEdit prop to true for edit functionality
+            isEdit={true}
             postId={editPostId}
-            post={posts.find((post) => post.id === editPostId)} // Find Post to edit
-            onSubmit={handleUpdatePost} // Pass handleUpdatePost for editing
+            post={posts.find((post) => post.id === editPostId)}
+            onSubmit={handleUpdatePost}
           />
         </Modal>
       )}
@@ -154,7 +152,6 @@ const PostList = () => {
         <table style={styles.table}>
           <thead>
             <tr>
-              {/* Adjust headers based on your post data model */}
               <th style={styles.tableHeader}>Title</th>
               <th style={styles.tableHeader}>Content</th>
               <th style={styles.tableHeader}>Actions</th>
@@ -163,11 +160,8 @@ const PostList = () => {
           <tbody>
             {posts.map((post) => (
               <tr key={post.id}>
-                {/* Render post data in table cells */}
                 <td style={styles.tableData}>{post.title}</td>
                 <td style={styles.tableData}>{post.content}</td>
-                {/* Show excerpt */}
-                {/* Render post data in table cells */}
                 <td style={styles.tableData}>
                   <div style={styles.actions}>
                     <button

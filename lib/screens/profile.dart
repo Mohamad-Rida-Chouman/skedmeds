@@ -6,12 +6,11 @@ void logout(BuildContext context) async {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   try {
     await _auth.signOut();
-    // Navigate to LoginScreen after successful logout
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   } catch (error) {
-    print(error.toString()); // Handle logout errors (optional)
+    print(error.toString());
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An error occurred while logging out.")));
   }
@@ -23,70 +22,59 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center, // Center content vertically
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Card(
               color: Color(0xFF38B3CD),
-              elevation: 2.0, // Optional shadow effect
+              elevation: 2.0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                borderRadius: BorderRadius.circular(8.0),
               ),
               child: Padding(
-                padding: EdgeInsets.all(16.0), // Add padding inside the card
+                padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    // Title
                     Text(
                       "SkedMeds",
                       style: TextStyle(
                         fontSize: 32.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white, // White text color
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(
-                      height:
-                          8.0, // Add smaller spacing between title and slogan
+                      height: 8.0,
                     ),
-
-                    // Slogan
                     Text(
                       "SCHEDULING MEDICATIONS MADE SIMPLE!",
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.white, // White text color
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 16.0), // Add spacing
-
-            // Display user email directly in the "Email" field
+            SizedBox(height: 16.0),
             Text(
               "Email:",
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
             Text(
-              FirebaseAuth.instance.currentUser?.email ??
-                  "", // Get email from user object
+              FirebaseAuth.instance.currentUser?.email ?? "",
             ),
-            SizedBox(height: 16.0), // Add spacing
-
+            SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 logout(context);
               },
               child: Text("Logout"),
               style: TextButton.styleFrom(
-                foregroundColor:
-                    Colors.white, // Text color for button (optional)
+                foregroundColor: Colors.white,
                 backgroundColor: Color(0xFF38B3CD),
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(4.0), // Set rounded corners
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
               ),
             ),

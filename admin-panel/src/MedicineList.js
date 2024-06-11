@@ -8,17 +8,17 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase"; // Assuming your firebase.js initializes app
+import { app } from "./firebase";
 import MedicineForm from "./MedicineForm";
-import Modal from "./Modal"; // Import your Modal component
+import Modal from "./Modal";
 
 const MedicineList = () => {
   const [medicines, setMedicines] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
-  const [editMedicineId, setEditMedicineId] = useState(null); // Add state for editMedicineId
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State for add modal
+  const [isLoading, setIsLoading] = useState(true);
+  const [editMedicineId, setEditMedicineId] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const db = getFirestore(app); // Get Firestore instance
+  const db = getFirestore(app);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "medicines"), (snapshot) => {
@@ -27,10 +27,10 @@ const MedicineList = () => {
         ...doc.data(),
       }));
       setMedicines(medicineData);
-      setIsLoading(false); // Set loading state to false after data arrives
+      setIsLoading(false);
     });
 
-    return () => unsubscribe(); // Cleanup function to unsubscribe on unmount
+    return () => unsubscribe();
   }, [db]);
 
   const handleDeleteMedicine = (id) => {
@@ -38,7 +38,6 @@ const MedicineList = () => {
     deleteDoc(medicineDocRef)
       .then(() => {
         console.log("Medicine deleted");
-        // Update medicines state to reflect deletion (optional optimization)
         setMedicines(medicines.filter((medicine) => medicine.id !== id));
       })
       .catch((error) => {
@@ -47,15 +46,15 @@ const MedicineList = () => {
   };
 
   const handleEditMedicine = (id) => {
-    setEditMedicineId(id); // Set editMedicineId when edit button is clicked
+    setEditMedicineId(id);
   };
 
   const handleAddMedicine = async (medicine) => {
     try {
       await addDoc(collection(db, "medicines"), medicine);
       console.log("Medicine added");
-      setEditMedicineId(null); // Clear editMedicineId after successful addition
-      setIsAddModalOpen(false); // Close add modal after successful addition
+      setEditMedicineId(null);
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error("Error adding medicine:", error);
     }
@@ -64,13 +63,13 @@ const MedicineList = () => {
   const handleUpdateMedicine = async (medicine) => {
     if (!medicine.id) {
       console.error("Error: Missing medicine ID for update");
-      return; // Exit the function if medicineId is missing
+      return;
     }
     const medicineDocRef = doc(collection(db, "medicines"), medicine.id);
     try {
       await updateDoc(medicineDocRef, medicine);
       console.log("Medicine updated");
-      setEditMedicineId(null); // Clear editMedicineId after successful update
+      setEditMedicineId(null);
     } catch (error) {
       console.error("Error updating medicine:", error);
     }
@@ -78,13 +77,13 @@ const MedicineList = () => {
 
   const styles = {
     container: {
-      backgroundColor: "#f0f8ff", // Light blue background
+      backgroundColor: "#f0f8ff",
       padding: 20,
       borderRadius: 5,
       boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
     },
     button: {
-      backgroundColor: "#e0e8f0", // Light gray button background
+      backgroundColor: "#e0e8f0",
       padding: 10,
       border: "none",
       borderRadius: 5,
@@ -92,9 +91,9 @@ const MedicineList = () => {
       margin: 5,
     },
     addButton: {
-      backgroundColor: "#a5d6a7", // Light green button for adding
-      color: "#fff", // White text
-      marginBottom: 15, // Add some margin below the button
+      backgroundColor: "#a5d6a7",
+      color: "#fff",
+      marginBottom: 15,
     },
     table: {
       width: "100%",
@@ -102,7 +101,7 @@ const MedicineList = () => {
     },
     tableHeader: {
       padding: 10,
-      backgroundColor: "#e0e8f0", // Light gray header background
+      backgroundColor: "#e0e8f0",
       fontWeight: "bold",
     },
     tableData: {
@@ -114,12 +113,12 @@ const MedicineList = () => {
       justifyContent: "space-between",
     },
     editButton: {
-      backgroundColor: "#ffc107", // Light orange button for editing
-      color: "#fff", // White text
+      backgroundColor: "#ffc107",
+      color: "#fff",
     },
     deleteButton: {
-      backgroundColor: "#dc3545", // Light red button for deleting
-      color: "#fff", // White text
+      backgroundColor: "#dc3545",
+      color: "#fff",
     },
   };
 
@@ -134,22 +133,19 @@ const MedicineList = () => {
       </button>
       {isAddModalOpen && (
         <Modal onClose={() => setIsAddModalOpen(false)}>
-          <MedicineForm onSubmit={handleAddMedicine} />{" "}
-          {/* Pass MedicineForm */}
+          <MedicineForm onSubmit={handleAddMedicine} />
         </Modal>
       )}
 
-      {editMedicineId && ( // Check if editMedicineId has a value (edit button clicked)
+      {editMedicineId && (
         <Modal onClose={() => setEditMedicineId(null)}>
-          {" "}
-          {/* Close modal on close */}
           <MedicineForm
-            isEdit={true} // Set isEdit prop to true for edit functionality
+            isEdit={true}
             medicineId={editMedicineId}
             medicine={medicines.find(
               (medicine) => medicine.id === editMedicineId
-            )} // Find medicine to edit
-            onSubmit={handleUpdateMedicine} // Pass handleUpdateMedicine for editing
+            )}
+            onSubmit={handleUpdateMedicine}
           />
         </Modal>
       )}

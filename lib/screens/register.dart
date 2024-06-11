@@ -12,7 +12,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/login");
@@ -21,7 +21,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      // Show snackbar for no internet connection
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('No internet connection. Please try again.'),
@@ -36,15 +35,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: _email, password: _password);
 
-        // Show success snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Welcome to Skedmeds!'),
-            duration: Duration(seconds: 2), // Set snackbar duration (optional)
+            duration: Duration(seconds: 2),
           ),
         );
 
-        // Navigate to main screen after a delay
         Future.delayed(Duration(seconds: 2), () {
           Navigator.pushReplacement(
             context,
@@ -54,22 +51,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } on FirebaseAuthException catch (error) {
         if (error.code == 'weak-password') {
           print('The password provided is too weak.');
-          // Show an error message to the user (e.g., using SnackBar)
         } else if (error.code == 'email-already-in-use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('User already exists!'),
             ),
           );
-
-          // Show an error message to the user
         } else {
           print(error.code);
-          // Handle other FirebaseAuthException errors (optional)
         }
       } catch (error) {
         print(error.toString());
-        // Handle other errors (optional)
       }
     }
   }
@@ -84,18 +76,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Title (optional)
                 Text(
                   "Skedmeds",
                   style: TextStyle(fontSize: 30.0),
                 ),
                 SizedBox(height: 20.0),
-
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Email field
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: "Email",
@@ -113,7 +102,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            // Show snackbar for empty email
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Please enter your email'),
@@ -123,7 +111,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           } else if (!RegExp(
                                   r"^[a-zA-Z0-9.a-z.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$")
                               .hasMatch(value)) {
-                            // Show snackbar for invalid email format
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Please enter a valid email'),
@@ -135,7 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         onSaved: (newValue) => _email = newValue!,
                       ),
-
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: "Password",
@@ -153,7 +139,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            // Show snackbar for empty password
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Please enter your password'),
@@ -161,7 +146,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             );
                             return "Please enter your password";
                           } else if (value.length < 6) {
-                            // Show snackbar for short password
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -175,28 +159,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         onSaved: (newValue) => _password = newValue!,
                       ),
-
                       SizedBox(height: 20.0),
-
-                      // Register button
                       ElevatedButton(
                         onPressed: _register,
                         child: Text("Register"),
                         style: TextButton.styleFrom(
-                          foregroundColor:
-                              Colors.white, // Text color for button (optional)
+                          foregroundColor: Colors.white,
                           backgroundColor: Color(0xFF38B3CD),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                4.0), // Set rounded corners
+                            borderRadius: BorderRadius.circular(4.0),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                // Text with clickable "Login"
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

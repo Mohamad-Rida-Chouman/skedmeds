@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
 
 const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
-  const [name, setName] = useState(medicine ? medicine.name : ""); // Pre-fill for edit
+  const [name, setName] = useState(medicine ? medicine.name : "");
   const [description, setDescription] = useState(
     medicine ? medicine.description : ""
-  ); // Pre-fill for edit
-  const [price, setPrice] = useState(medicine ? medicine.price : ""); // Pre-fill for edit
-  // const buttonRef = useRef(null); // Reference for button hover effect
+  );
+  const [price, setPrice] = useState(medicine ? medicine.price : "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,12 +17,11 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
     };
 
     if (isEdit) {
-      medicineData.id = medicine.id; // Include id for update
+      medicineData.id = medicine.id;
     }
 
-    onSubmit(medicineData); // Call onSubmit with updated data
+    onSubmit(medicineData);
 
-    // Clear form after submission (optional)
     setName("");
     setDescription("");
     setPrice("");
@@ -34,36 +32,36 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
     setPrice(priceAsNumber);
   };
 
-  const buttonRef = useRef(null); // Reference for button hover effect
+  const buttonRef = useRef(null);
 
   const formStyles = {
     container: {
       display: "flex",
       flexDirection: "column",
-      alignItems: "center", // Center elements horizontally
-      justifyContent: "center", // Center elements vertically (within modal)
+      alignItems: "center",
+      justifyContent: "center",
       padding: 20,
     },
     label: {
-      marginBottom: 5, // Add some margin below labels
+      marginBottom: 5,
     },
     input: {
-      marginBottom: 15, // Add some margin below inputs
+      marginBottom: 15,
       padding: 10,
       border: "1px solid #ccc",
       borderRadius: 5,
     },
     descriptionInput: {
-      height: 100, // Adjust height as needed
-      resize: "none", // Prevent textarea resizing
+      height: 100,
+      resize: "none",
     },
     button: {
-      backgroundColor: "#e0e8f0", // Light gray button background
+      backgroundColor: "#e0e8f0",
       padding: 10,
       border: "none",
       borderRadius: 5,
       cursor: "pointer",
-      marginTop: 15, // Add margin above button
+      marginTop: 15,
     },
   };
 

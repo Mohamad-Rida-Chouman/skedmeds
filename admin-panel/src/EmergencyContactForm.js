@@ -1,18 +1,12 @@
 import React, { useState, useRef } from "react";
 
-const EmergencyContactForm = ({
-  emergencyId,
-  emergencyContact,
-  isEdit,
-  onSubmit,
-}) => {
+const EmergencyContactForm = ({ emergencyContact, isEdit, onSubmit }) => {
   const [type, setType] = useState(
     emergencyContact ? emergencyContact.type : ""
-  ); // Pre-fill for edit
+  );
   const [phone_number, setPhoneNumber] = useState(
     emergencyContact ? emergencyContact.phone_number : ""
-  ); // Pre-fill for edit
-  // const buttonRef = useRef(null); // Reference for button hover effect
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,46 +17,45 @@ const EmergencyContactForm = ({
     };
 
     if (isEdit) {
-      emergencyContactData.id = emergencyContact.id; // Include id for update
+      emergencyContactData.id = emergencyContact.id;
     }
 
-    onSubmit(emergencyContactData); // Call onSubmit with updated data
+    onSubmit(emergencyContactData);
 
-    // Clear form after submission (optional)
     setType("");
     setPhoneNumber("");
   };
 
-  const buttonRef = useRef(null); // Reference for button hover effect
+  const buttonRef = useRef(null);
 
   const formStyles = {
     container: {
       display: "flex",
       flexDirection: "column",
-      alignItems: "center", // Center elements horizontally
-      justifyContent: "center", // Center elements vertically (within modal)
+      alignItems: "center",
+      justifyContent: "center",
       padding: 20,
     },
     label: {
-      marginBottom: 5, // Add some margin below labels
+      marginBottom: 5,
     },
     input: {
-      marginBottom: 15, // Add some margin below inputs
+      marginBottom: 15,
       padding: 10,
       border: "1px solid #ccc",
       borderRadius: 5,
     },
     descriptionInput: {
-      height: 100, // Adjust height as needed
-      resize: "none", // Prevent textarea resizing
+      height: 100,
+      resize: "none",
     },
     button: {
-      backgroundColor: "#e0e8f0", // Light gray button background
+      backgroundColor: "#e0e8f0",
       padding: 10,
       border: "none",
       borderRadius: 5,
       cursor: "pointer",
-      marginTop: 15, // Add margin above button
+      marginTop: 15,
     },
   };
 

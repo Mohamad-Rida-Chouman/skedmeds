@@ -41,43 +41,45 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.9,
-                  child: Center(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: emergencyNumbers.length,
-                      itemBuilder: (context, index) {
-                        final emergencyType =
-                            emergencyNumbers.keys.elementAt(index);
-                        final phoneNumber =
-                            emergencyNumbers.values.elementAt(index);
-                        return ListTile(
-                          title: Text(
-                            emergencyType,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: Center(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: emergencyNumbers.length,
+                        itemBuilder: (context, index) {
+                          final emergencyType =
+                              emergencyNumbers.keys.elementAt(index);
+                          final phoneNumber =
+                              emergencyNumbers.values.elementAt(index);
+                          return ListTile(
+                            title: Text(
+                              emergencyType,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          subtitle:
-                              Text(phoneNumber, textAlign: TextAlign.center),
-                        );
-                      },
+                            subtitle:
+                                Text(phoneNumber, textAlign: TextAlign.center),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

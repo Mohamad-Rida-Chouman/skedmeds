@@ -4,6 +4,7 @@ import EmergencyContactList from "./EmergencyContactList";
 import PostList from "./PostList";
 import MedicineList from "./MedicineList";
 import Navbar from "./Navbar";
+import AddCaregiver from "./AddCaregiver";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               element={<EmergencyContactList />}
             />
             <Route path="/posts" element={<PostList />} />
+            <Route path="/add-caregiver" element={<AddCaregiver />} />
           </Routes>
         </div>
       </div>

@@ -30,9 +30,17 @@ const Navbar = () => {
             Emergency Contacts
           </Link>
         </li>
-        <li>
+        <li style={{ marginRight: "20px" }}>
           <Link to="/posts" style={{ color: "#fff", textDecoration: "none" }}>
             Posts
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/add-caregiver"
+            style={{ color: "#fff", textDecoration: "none" }}
+          >
+            Caregivers
           </Link>
         </li>
       </ul>

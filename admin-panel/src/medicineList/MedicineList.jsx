@@ -8,15 +8,17 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase";
-import MedicineForm from "./MedicineForm";
-import Modal from "./Modal";
+import { app } from "../firebase";
+import MedicineForm from "../medicineForm/MedicineForm";
+import Modal from "../Modal";
+import './medicineList.css';
 
 const MedicineList = () => {
   const [medicines, setMedicines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editMedicineId, setEditMedicineId] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [medicineImages, setMedicineImages] = useState({});
 
   const db = getFirestore(app);
 
@@ -25,9 +27,17 @@ const MedicineList = () => {
       const medicineData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
+        imageUrl: doc.data().imageUrl || "", // Set default empty string for imageUrl
       }));
       setMedicines(medicineData);
       setIsLoading(false);
+
+      // Update medicineImages state with image URLs
+      const newMedicineImages = {};
+      medicineData.forEach((medicine) => {
+        newMedicineImages[medicine.id] = medicine.imageUrl;
+      });
+      setMedicineImages(newMedicineImages);
     });
 
     return () => unsubscribe();
@@ -75,58 +85,11 @@ const MedicineList = () => {
     }
   };
 
-  const styles = {
-    container: {
-      backgroundColor: "#f0f8ff",
-      padding: 20,
-      borderRadius: 5,
-      boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-    },
-    button: {
-      backgroundColor: "#e0e8f0",
-      padding: 10,
-      border: "none",
-      borderRadius: 5,
-      cursor: "pointer",
-      margin: 5,
-    },
-    addButton: {
-      backgroundColor: "#a5d6a7",
-      color: "#fff",
-      marginBottom: 15,
-    },
-    table: {
-      width: "100%",
-      borderCollapse: "collapse",
-    },
-    tableHeader: {
-      padding: 10,
-      backgroundColor: "#e0e8f0",
-      fontWeight: "bold",
-    },
-    tableData: {
-      padding: 10,
-      border: "1px solid #ddd",
-    },
-    actions: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    editButton: {
-      backgroundColor: "#ffc107",
-      color: "#fff",
-    },
-    deleteButton: {
-      backgroundColor: "#dc3545",
-      color: "#fff",
-    },
-  };
-
   return (
-    <div style={styles.container}>
+    <div className="container">
       <h2>Medicine List</h2>
       <button
-        style={{ ...styles.button, ...styles.addButton }}
+        className="button addButton"
         onClick={() => setIsAddModalOpen(true)}
       >
         Add Medicine
@@ -152,31 +115,42 @@ const MedicineList = () => {
       {isLoading ? (
         <p>Loading medicines...</p>
       ) : (
-        <table style={styles.table}>
+        <table className="table">
           <thead>
             <tr>
-              <th style={styles.tableHeader}>Name</th>
-              <th style={styles.tableHeader}>Description</th>
-              <th style={styles.tableHeader}>Price</th>
-              <th style={styles.tableHeader}>Actions</th>
+              <th className="tableHeader">Image</th>
+              <th className="tableHeader">Name</th>
+              <th className="tableHeader">Description</th>
+              <th className="tableHeader">Price</th>
+              <th className="tableHeader">Actions</th>
             </tr>
           </thead>
           <tbody>
             {medicines.map((medicine) => (
               <tr key={medicine.id}>
-                <td style={styles.tableData}>{medicine.name}</td>
-                <td style={styles.tableData}>{medicine.description}</td>
-                <td style={styles.tableData}>{medicine.price}</td>
-                <td style={styles.tableData}>
-                  <div style={styles.actions}>
+                <td className="tableData">
+                  {medicineImages[medicine.id] && (
+                    <div className="tableDataImage">
+                      <img
+                        src={medicineImages[medicine.id]}
+                        alt={medicine.name}
+                      />
+                    </div>
+                  )}
+                </td>
+                <td className="tableData">{medicine.name}</td>
+                <td className="tableData">{medicine.description}</td>
+                <td className="tableData">{medicine.price}</td>
+                <td className="tableData">
+                  <div className="actions">
                     <button
-                      style={{ ...styles.button, ...styles.editButton }}
+                      className="button editButton"
                       onClick={() => handleEditMedicine(medicine.id)}
                     >
                       Edit
                     </button>
                     <button
-                      style={{ ...styles.button, ...styles.deleteButton }}
+                      className="button deleteButton"
                       onClick={() => handleDeleteMedicine(medicine.id)}
                     >
                       Delete

@@ -1,11 +1,19 @@
 import React, { useState, useRef } from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import storage functions
+import { app } from "../firebase";
+import './medicineForm.css';
 
-const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
+const MedicineForm = ({ medicine, isEdit, onSubmit }) => {
   const [name, setName] = useState(medicine ? medicine.name : "");
   const [description, setDescription] = useState(
     medicine ? medicine.description : ""
   );
   const [price, setPrice] = useState(medicine ? medicine.price : "");
+  const [image, setImage] = useState(null);
+
+  const handleChangeImage = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,11 +28,20 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
       medicineData.id = medicine.id;
     }
 
+    // Image upload logic
+    if (image) {
+      const storageRef = ref(getStorage(app), `medicines/${image.name}`);
+      await uploadBytes(storageRef, image);
+      const imageUrl = await getDownloadURL(storageRef);
+      medicineData.imageUrl = imageUrl;
+    }
+
     onSubmit(medicineData);
 
     setName("");
     setDescription("");
-    setPrice("");
+    setPrice(0);
+    setImage(null);
   };
 
   const handleChangePrice = (e) => {
@@ -34,41 +51,10 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
 
   const buttonRef = useRef(null);
 
-  const formStyles = {
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 20,
-    },
-    label: {
-      marginBottom: 5,
-    },
-    input: {
-      marginBottom: 15,
-      padding: 10,
-      border: "1px solid #ccc",
-      borderRadius: 5,
-    },
-    descriptionInput: {
-      height: 100,
-      resize: "none",
-    },
-    button: {
-      backgroundColor: "#e0e8f0",
-      padding: 10,
-      border: "none",
-      borderRadius: 5,
-      cursor: "pointer",
-      marginTop: 15,
-    },
-  };
-
   return (
-    <form onSubmit={handleSubmit} style={formStyles.container}>
+    <form onSubmit={handleSubmit} className="container">
       <h2>{isEdit ? "Edit Medicine" : "Add Medicine"}</h2>
-      <label style={formStyles.label} htmlFor="name">
+      <label className="label" htmlFor="name">
         Name:
       </label>
       <input
@@ -77,18 +63,18 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
-        style={formStyles.input}
+        className="input"
       />
-      <label style={formStyles.label} htmlFor="description">
+      <label className="label" htmlFor="description">
         Description:
       </label>
       <textarea
         id="description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        style={{ ...formStyles.input, ...formStyles.descriptionInput }}
+        className="input descriptionInput"
       />
-      <label style={formStyles.label} htmlFor="price">
+      <label className="label" htmlFor="price">
         Price:
       </label>
       <input
@@ -96,9 +82,19 @@ const MedicineForm = ({ medicineId, medicine, isEdit, onSubmit }) => {
         id="price"
         value={price}
         onChange={handleChangePrice}
-        style={formStyles.input}
+        className="input"
       />
-      <button type="submit" ref={buttonRef} style={formStyles.button}>
+      <label className="label" htmlFor="image">
+        Image:
+      </label>
+      <input
+        type="file"
+        id="image"
+        onChange={handleChangeImage}
+        className="input"
+      />
+
+      <button type="submit" ref={buttonRef} className="button">
         {isEdit ? "Update" : "Add"}
       </button>
     </form>

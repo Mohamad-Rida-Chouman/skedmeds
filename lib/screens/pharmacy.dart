@@ -239,6 +239,19 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           itemBuilder: (context, index) {
             final item = _cartItems[index];
             return ListTile(
+              leading: (item.imageUrl != null)
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
+                        item.imageUrl!,
+                        width: 50.0,
+                        height: 50.0,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Icon(Icons.error), // Display error icon
+                      ),
+                    )
+                  : SizedBox(width: 50.0),
               title: Text(item.name),
               subtitle: Text("Price: \$" + item.price.toStringAsFixed(2)),
               trailing: IconButton(

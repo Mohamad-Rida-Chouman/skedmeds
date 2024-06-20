@@ -6,23 +6,27 @@ class Item {
   final String name;
   final String description;
   final double price;
+  final String? imageUrl; // Optional imageUrl property
 
   Item({
     required this.name,
     required this.description,
     required this.price,
+    required this.imageUrl,
   });
 
   factory Item.fromFirestore(Map<String, dynamic> data) => Item(
         name: data['name'] as String,
         description: data['description'] as String,
         price: (data['price'] as num).toDouble(),
+        imageUrl: data['imageUrl'] as String?,
       );
 
   Map<String, dynamic> toMap() => {
         'name': name,
         'description': description,
         'price': price,
+        'imageUrl': imageUrl,
       };
 }
 
@@ -72,7 +76,14 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       final querySnapshot = await medicinesCollection.get();
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
-          final item = Item.fromFirestore(doc.data());
+          final itemData = doc.data(); // Get the data map
+          final imageUrl = itemData['imageUrl'] as String?;
+          final item = Item(
+            name: itemData['name'] as String,
+            description: itemData['description'] as String,
+            price: (itemData['price'] as num).toDouble(),
+            imageUrl: imageUrl,
+          );
           _items.add(item);
         }
         _displayedItems.addAll(_items);
@@ -229,9 +240,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             final item = _cartItems[index];
             return ListTile(
               title: Text(item.name),
-              subtitle: Text(
-                "Price: \$" + item.price.toStringAsFixed(2),
-              ),
+              subtitle: Text("Price: \$" + item.price.toStringAsFixed(2)),
               trailing: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () => _removeFromCart(item),
@@ -258,34 +267,57 @@ class PharmacyItemCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              item.name,
-              style: TextStyle(fontSize: 16.0),
-            ),
-            Text(
-              item.description,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text("Price: \$" + item.price.toStringAsFixed(2)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: onAddToCart,
-                  child: Text("Add to Cart"),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Color(0xFF38B3CD),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
+            if (item.imageUrl !=
+                null) // Check for null before accessing imageUrl
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  item.imageUrl!,
+                  fit: BoxFit.cover,
+                  width: 80.0,
+                  height: 80.0,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                        child: Icon(Icons.error)); // Display error icon
+                  },
                 ),
-              ],
+              ),
+            SizedBox(width: 16.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Text(
+                    item.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text("Price: \$" + item.price.toStringAsFixed(2)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: onAddToCart,
+                        child: Text("Add to Cart"),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color(0xFF38B3CD),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

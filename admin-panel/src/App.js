@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import EmergencyContactList from "./EmergencyContactList";
 import PostList from "./PostList";
-import MedicineList from "./MedicineList";
+import MedicineList from "./medicineList/MedicineList";
 import Navbar from "./Navbar";
 import AddCaregiver from "./AddCaregiver";
 

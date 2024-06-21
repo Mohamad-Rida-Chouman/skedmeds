@@ -17,6 +17,7 @@ const PostList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editPostId, setEditPostId] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [postImages, setPostImages] = useState({});
 
   const db = getFirestore(app);
 
@@ -25,9 +26,17 @@ const PostList = () => {
       const postData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
+        imageUrl: doc.data().imageUrl || "", // Set default empty string for imageUrl
       }));
       setPosts(postData);
       setIsLoading(false);
+
+      // Update medicineImages state with image URLs
+      const newPostImages = {};
+      postData.forEach((post) => {
+        newPostImages[post.id] = post.imageUrl;
+      });
+      setPostImages(newPostImages);
     });
 
     return () => unsubscribe();
@@ -152,6 +161,7 @@ const PostList = () => {
         <table style={styles.table}>
           <thead>
             <tr>
+              <th style={styles.tableHeader}>Image</th>
               <th style={styles.tableHeader}>Title</th>
               <th style={styles.tableHeader}>Content</th>
               <th style={styles.tableHeader}>Actions</th>
@@ -160,6 +170,13 @@ const PostList = () => {
           <tbody>
             {posts.map((post) => (
               <tr key={post.id}>
+                <td className="tableData">
+                  {postImages[post.id] && (
+                    <div className="tableDataImage">
+                      <img src={postImages[post.id]} alt={post.name} />
+                    </div>
+                  )}
+                </td>
                 <td style={styles.tableData}>{post.title}</td>
                 <td style={styles.tableData}>{post.content}</td>
                 <td style={styles.tableData}>

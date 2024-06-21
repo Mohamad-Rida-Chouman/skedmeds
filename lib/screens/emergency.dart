@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyScreen extends StatefulWidget {
   @override
@@ -69,8 +70,14 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle:
-                                Text(phoneNumber, textAlign: TextAlign.center),
+                            subtitle: InkWell(
+                              onTap: () => launchUrl(Uri.parse(
+                                  "tel:$phoneNumber")), // Launch phone dialer
+                              child: Text(
+                                phoneNumber,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           );
                         },
                       ),

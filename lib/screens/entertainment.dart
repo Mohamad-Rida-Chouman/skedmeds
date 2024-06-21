@@ -48,19 +48,31 @@ class _EntertainmentScreenState extends State<EntertainmentScreen> {
                   style: TextStyle(fontSize: 16.0),
                 )
               : Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        post!['title']!,
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 16.0),
-                      Text(post!['content']!),
-                      Divider(),
-                    ],
-                  ),
+                  child: post == null
+                      ? CircularProgressIndicator()
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(
+                                post!['imageUrl']!,
+                                width: 100.0,
+                                height: 100.0,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(Icons.error), // Display error icon
+                              ),
+                            ),
+                            Text(
+                              post!['title']!,
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 16.0),
+                            Text(post!['content']!),
+                          ],
+                        ),
                 ),
         ),
       ),

@@ -46,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
                       height: 8.0,
                     ),
                     Text(
-                      "SCHEDULING MEDICATIONS MADE SIMPLE!",
+                      "Scheduling Medications Made Simple!",
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Colors.white,

@@ -8,9 +8,10 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase";
-import PostForm from "./PostForm";
-import Modal from "./Modal";
+import { app } from "../firebase";
+import PostForm from "../postForm/PostForm";
+import "./postList.css";
+import Modal from "../modal/Modal";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
@@ -83,58 +84,11 @@ const PostList = () => {
     }
   };
 
-  const styles = {
-    container: {
-      backgroundColor: "#f0f8ff",
-      padding: 20,
-      borderRadius: 5,
-      boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-    },
-    button: {
-      backgroundColor: "#e0e8f0",
-      padding: 10,
-      border: "none",
-      borderRadius: 5,
-      cursor: "pointer",
-      margin: 5,
-    },
-    addButton: {
-      backgroundColor: "#a5d6a7",
-      color: "#fff",
-      marginBottom: 15,
-    },
-    table: {
-      width: "100%",
-      borderCollapse: "collapse",
-    },
-    tableHeader: {
-      padding: 10,
-      backgroundColor: "#e0e8f0",
-      fontWeight: "bold",
-    },
-    tableData: {
-      padding: 10,
-      border: "1px solid #ddd",
-    },
-    actions: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    editButton: {
-      backgroundColor: "#ffc107",
-      color: "#fff",
-    },
-    deleteButton: {
-      backgroundColor: "#dc3545",
-      color: "#fff",
-    },
-  };
-
   return (
-    <div style={styles.container}>
+    <div className="container">
       <h2>Posts</h2>
       <button
-        style={{ ...styles.button, ...styles.addButton }}
+        className="button addButton"
         onClick={() => setIsAddModalOpen(true)}
       >
         Add Post
@@ -158,13 +112,13 @@ const PostList = () => {
       {isLoading ? (
         <p>Loading posts...</p>
       ) : (
-        <table style={styles.table}>
+        <table className="table">
           <thead>
             <tr>
-              <th style={styles.tableHeader}>Image</th>
-              <th style={styles.tableHeader}>Title</th>
-              <th style={styles.tableHeader}>Content</th>
-              <th style={styles.tableHeader}>Actions</th>
+              <th className="tableHeader">Image</th>
+              <th className="tableHeader">Title</th>
+              <th className="tableHeader">Content</th>
+              <th className="tableHeader">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -177,18 +131,18 @@ const PostList = () => {
                     </div>
                   )}
                 </td>
-                <td style={styles.tableData}>{post.title}</td>
-                <td style={styles.tableData}>{post.content}</td>
-                <td style={styles.tableData}>
-                  <div style={styles.actions}>
+                <td className="tableData">{post.title}</td>
+                <td className="tableData">{post.content}</td>
+                <td className="tableData">
+                  <div className="actions">
                     <button
-                      style={{ ...styles.button, ...styles.editButton }}
+                      className="button editButton"
                       onClick={() => handleEditPost(post.id)}
                     >
                       Edit
                     </button>
                     <button
-                      style={{ ...styles.button, ...styles.deleteButton }}
+                      className="button deleteButton"
                       onClick={() => handleDeletePost(post.id)}
                     >
                       Delete

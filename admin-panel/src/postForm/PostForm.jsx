@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import storage functions
-import { app } from "./firebase";
+import { app } from "../firebase";
 
 const PostForm = ({ postId, post, isEdit, onSubmit }) => {
   const [title, setTitle] = useState(post ? post.title : "");
@@ -39,41 +39,10 @@ const PostForm = ({ postId, post, isEdit, onSubmit }) => {
 
   const buttonRef = useRef(null);
 
-  const formStyles = {
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 20,
-    },
-    label: {
-      marginBottom: 5,
-    },
-    input: {
-      marginBottom: 15,
-      padding: 10,
-      border: "1px solid #ccc",
-      borderRadius: 5,
-    },
-    descriptionInput: {
-      height: 100,
-      resize: "none",
-    },
-    button: {
-      backgroundColor: "#e0e8f0",
-      padding: 10,
-      border: "none",
-      borderRadius: 5,
-      cursor: "pointer",
-      marginTop: 15,
-    },
-  };
-
   return (
-    <form onSubmit={handleSubmit} style={formStyles.container}>
+    <form onSubmit={handleSubmit} className="container">
       <h2>{isEdit ? "Edit post" : "Add post"}</h2>
-      <label style={formStyles.label} htmlFor="title">
+      <label className="label" htmlFor="title">
         Title:
       </label>
       <input
@@ -82,16 +51,16 @@ const PostForm = ({ postId, post, isEdit, onSubmit }) => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        style={formStyles.input}
+        className="input"
       />
-      <label style={formStyles.label} htmlFor="content">
+      <label className="label" htmlFor="content">
         Content:
       </label>
       <textarea
         id="content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        style={{ ...formStyles.input, ...formStyles.contentInput }}
+        className="input contentInput"
       />
       <label className="label" htmlFor="image">
         Image:
@@ -103,7 +72,7 @@ const PostForm = ({ postId, post, isEdit, onSubmit }) => {
         className="input"
       />
 
-      <button type="submit" ref={buttonRef} style={formStyles.button}>
+      <button type="submit" ref={buttonRef} className="button">
         {isEdit ? "Update" : "Add"}
       </button>
     </form>

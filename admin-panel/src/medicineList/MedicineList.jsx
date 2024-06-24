@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { app } from "../firebase";
 import MedicineForm from "../medicineForm/MedicineForm";
-import Modal from "../Modal";
+import Modal from "../modal/Modal";
 import './medicineList.css';
 
 const MedicineList = () => {

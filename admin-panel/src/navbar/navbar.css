@@ -1,0 +1,31 @@
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333333;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.nav-title{
+    color: #ffffff;
+    margin: 0;
+}
+
+.nav-list{
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.right-margin{
+    margin-right: 20px;
+}

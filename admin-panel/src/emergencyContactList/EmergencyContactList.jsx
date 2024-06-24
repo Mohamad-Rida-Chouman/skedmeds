@@ -8,9 +8,10 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import { app } from "./firebase";
-import EmergencyContactForm from "./EmergencyContactForm";
-import Modal from "./Modal";
+import { app } from "../firebase";
+import EmergencyContactForm from "../emergencyContactForm/EmergencyContactForm";
+import Modal from "../modal/Modal";
+import "./emergencyContactList.css";
 
 const EmergencyContactList = () => {
   const [emergencyContacts, setEmergencyContacts] = useState([]);
@@ -79,58 +80,11 @@ const EmergencyContactList = () => {
     }
   };
 
-  const styles = {
-    container: {
-      backgroundColor: "#f0f8ff",
-      padding: 20,
-      borderRadius: 5,
-      boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-    },
-    button: {
-      backgroundColor: "#e0e8f0",
-      padding: 10,
-      border: "none",
-      borderRadius: 5,
-      cursor: "pointer",
-      margin: 5,
-    },
-    addButton: {
-      backgroundColor: "#a5d6a7",
-      color: "#fff",
-      marginBottom: 15,
-    },
-    table: {
-      width: "100%",
-      borderCollapse: "collapse",
-    },
-    tableHeader: {
-      padding: 10,
-      backgroundColor: "#e0e8f0",
-      fontWeight: "bold",
-    },
-    tableData: {
-      padding: 10,
-      border: "1px solid #ddd",
-    },
-    actions: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    editButton: {
-      backgroundColor: "#ffc107",
-      color: "#fff",
-    },
-    deleteButton: {
-      backgroundColor: "#dc3545",
-      color: "#fff",
-    },
-  };
-
   return (
-    <div style={styles.container}>
+    <div className="container">
       <h2>Emergency Contacts</h2>
       <button
-        style={{ ...styles.button, ...styles.addButton }}
+        className="button addButton"
         onClick={() => setIsAddModalOpen(true)}
       >
         Add Contact
@@ -157,25 +111,25 @@ const EmergencyContactList = () => {
       {isLoading ? (
         <p>Loading emergency contacts...</p>
       ) : (
-        <table style={styles.table}>
+        <table className="table">
           <thead>
             <tr>
-              <th style={styles.tableHeader}>Name</th>
-              <th style={styles.tableHeader}>Phone Number</th>
-              <th style={styles.tableHeader}>Actions</th>
+              <th className="tableHeader">Name</th>
+              <th className="tableHeader">Phone Number</th>
+              <th className="tableHeader">Actions</th>
             </tr>
           </thead>
           <tbody>
             {emergencyContacts.map((emergencyContact) => (
               <tr key={emergencyContact.id}>
-                <td style={styles.tableData}>{emergencyContact.type}</td>
-                <td style={styles.tableData}>
+                <td className="tableData">{emergencyContact.type}</td>
+                <td className="tableData">
                   {emergencyContact.phone_number}
                 </td>
-                <td style={styles.tableData}>
-                  <div style={styles.actions}>
+                <td className="tableData">
+                  <div className="actions">
                     <button
-                      style={{ ...styles.button, ...styles.editButton }}
+                      className="button editButton"
                       onClick={() =>
                         handleEditEmergencyContact(emergencyContact.id)
                       }
@@ -183,7 +137,7 @@ const EmergencyContactList = () => {
                       Edit
                     </button>
                     <button
-                      style={{ ...styles.button, ...styles.deleteButton }}
+                      className="button deleteButton"
                       onClick={() =>
                         handleDeleteEmergencyContact(emergencyContact.id)
                       }

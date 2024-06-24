@@ -62,8 +62,8 @@ const MedicineForm = ({ medicine, isEdit, onSubmit }) => {
         id="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        required
         className="input"
+        required
       />
       <label className="label" htmlFor="description">
         Description:
@@ -73,6 +73,7 @@ const MedicineForm = ({ medicine, isEdit, onSubmit }) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         className="input descriptionInput"
+        required
       />
       <label className="label" htmlFor="price">
         Price:
@@ -83,6 +84,7 @@ const MedicineForm = ({ medicine, isEdit, onSubmit }) => {
         value={price}
         onChange={handleChangePrice}
         className="input"
+        required
       />
       <label className="label" htmlFor="image">
         Image:
@@ -92,6 +94,7 @@ const MedicineForm = ({ medicine, isEdit, onSubmit }) => {
         id="image"
         onChange={handleChangeImage}
         className="input"
+        required
       />
 
       <button type="submit" ref={buttonRef} className="button">

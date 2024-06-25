@@ -29,3 +29,7 @@
 .right-margin{
     margin-right: 20px;
 }
+
+.nav-link-disabled{
+    pointer-events: none;
+}

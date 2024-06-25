@@ -43,7 +43,7 @@ const App = () => {
         <div style={{ flex: 1, padding: "20px 20px 80px" }}>
           <Routes>
             <Route
-              path="/"
+              path="/medicines"
               element={
                 isLoggedIn ? <MedicineList /> : <Navigate to="/login" replace />
               }

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import { collection, doc, getFirestore , query, where, getDocs, setDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { app } from "./firebase"; // Import your Firebase config
+import { useNavigate } from 'react-router-dom';
 
 function AuthForm() {
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const [isRegister, setIsRegister] = useState(false);
   const [userData, setUserData] = useState(null); // State for user data
   const [loginErrorMessage, setLoginErrorMessage] = useState(null); // State for login error message
@@ -47,7 +50,12 @@ function AuthForm() {
       if (userData) {
         setUserData(userData); // Update user data state
         console.log('Retrieved user data:', userData);
-        // Optionally redirect to a user-specific page or dashboard
+        // Check user role and navigate accordingly
+        if (userData.role === 'admin') {
+            navigate('/medicines'); // Navigate to medicines page for admin
+          } else {
+            navigate('/posts'); // Navigate to posts page for caregiver
+          }
       } else {
         console.error('User data not found or error fetching data');
         setLoginErrorMessage('An error occurred. Please try again.'); // Set error message
@@ -82,7 +90,12 @@ function AuthForm() {
   
       await setDoc(docRef, userData); // Set user data in the newly created document
       console.log('User data saved successfully');
-      // Optionally, redirect to a success page or dashboard
+      // Check user role and navigate accordingly
+      if (userData.role === 'admin') {
+        navigate('/medicines'); // Navigate to medicines page for admin
+      } else {
+        navigate('/posts'); // Navigate to posts page for caregiver
+      }
     } catch (error) {
       console.error('Registration failed:', error.message);
       setLoginErrorMessage('An error occurred during registration. Please try again.'); // Set error message

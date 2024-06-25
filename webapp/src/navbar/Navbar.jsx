@@ -13,11 +13,11 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
       <ul className="nav-list">
         <li className="right-margin">
           {isLoggedIn ? (
-            <Link to="/" className="nav-link">
+            <Link to="/medicines" className="nav-link">
               Medicines
             </Link>
           ) : (
-            <span className="nav-link-disabled">Medicines</span>
+            <span className="nav-link-disabled invisible">Medicines</span>
           )}
         </li>
         <li className="right-margin">
@@ -26,7 +26,7 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
               Posts
             </Link>
           ) : (
-            <span className="nav-link-disabled">Posts</span>
+            <span className="nav-link-disabled invisible">Posts</span>
           )}
         </li>
         <li className="right-margin">
@@ -35,26 +35,17 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
               Emergency Contacts
             </Link>
           ) : (
-            <span className="nav-link-disabled">Emergency Contacts</span>
-          )}
-        </li>
-        <li>
-          {isLoggedIn ? (
-            <Link to="/add-caregiver" className="nav-link">
-              Caregivers
-            </Link>
-          ) : (
-            <span className="nav-link-disabled">Caregivers</span>
+            <span className="nav-link-disabled invisible">Emergency Contacts</span>
           )}
         </li>
         <li>
         {isLoggedIn ? (
-          <button className="nav-link" onClick={handleLogout}>
+          <button className="nav-button" onClick={handleLogout}>
             Logout
           </button>
         ) : (
-          <button className="nav-link" onClick={() => navigate("/login")}>
-            Login
+          <button className="nav-button invisible">
+            Logout
           </button>
         )}
       </li>

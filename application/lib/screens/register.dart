@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:skedmeds/components/navbar.dart';
@@ -11,8 +12,10 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email = "";
+  String _username = "";
   String _password = "";
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _toggleView(BuildContext context) {
     Navigator.pushNamed(context, "/login");
@@ -35,9 +38,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: _email, password: _password);
 
+        // Add user data to Firestore (except password)
+        await _firestore
+            .collection('app_users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'email': _email,
+          'username': _username,
+          // Add other user data fields here
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Welcome to Skedmeds!'),
+            content: Text('Welcome to Skedmeds, ' + _username + ' !'),
             duration: Duration(seconds: 2),
           ),
         );
@@ -85,6 +98,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: "Username",
+                          floatingLabelStyle: TextStyle(color: Colors.teal),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please enter a username'),
+                              ),
+                            );
+                            return "Please enter a username";
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) => _username = newValue!,
+                      ),
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: "Email",

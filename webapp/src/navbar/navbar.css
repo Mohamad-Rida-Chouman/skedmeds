@@ -52,6 +52,5 @@
 }
 
 .invisible{
-    color: transparent;
-    pointer-events: none;
+    display:none;
 }

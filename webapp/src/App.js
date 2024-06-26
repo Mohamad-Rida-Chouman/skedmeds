@@ -12,18 +12,20 @@ import Navbar from "./navbar/Navbar";
 import AuthForm from "./AuthForm"; // Import your AuthForm component
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { app } from "./firebase"; // Import your Firebase config
+import RegisterForm from "./RegisterForm";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // User login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const auth = getAuth(app); // Get the authentication object
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user); // Update login state based on Firebase user
-    });
-
-    return () => unsubscribe(); // Cleanup on unmount
-  }, []);
+  const handleLoginSuccess = (data, success) => {
+    setIsLoggedIn(success); // Update login state based on success flag
+    if (success) {
+      setUserData(data); // Update user data state if login was successful
+    } else {
+      setUserData(null); // Reset user data on login failure
+    }
+  };
 
   const logoutUser = async () => {
     try {
@@ -36,23 +38,41 @@ const App = () => {
     }
   };
 
+  // Check user login status on component mount
+  useEffect(() => {
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true); // Set logged in state if user object exists
+      } else {
+        setIsLoggedIn(false); // Set logged out state if no user object
+      }
+    });
+  }, []); // Empty dependency array to run only on mount
+
   return (
     <Router>
       <div className="App">
-        <Navbar isLoggedIn={isLoggedIn} handleLogout={logoutUser} />
+        <Navbar
+          isLoggedIn={isLoggedIn}
+          handleLogout={logoutUser}
+          userData={userData}
+        />
         <div style={{ flex: 1, padding: "20px 20px 80px" }}>
           <Routes>
             <Route
               path="/medicines"
               element={
-                isLoggedIn ? <MedicineList /> : <Navigate to="/login" replace />
+                isLoggedIn && userData?.role === "admin" ? (
+                  <MedicineList />
+                ) : (
+                  <Navigate to="/" replace />
+                )
               }
             />
             <Route
               path="/posts"
-              element={
-                isLoggedIn ? <PostList /> : <Navigate to="/login" replace />
-              }
+              element={isLoggedIn ? <PostList /> : <Navigate to="/" replace />}
             />
             <Route
               path="/emergency-contacts"
@@ -60,11 +80,24 @@ const App = () => {
                 isLoggedIn ? (
                   <EmergencyContactList />
                 ) : (
-                  <Navigate to="/login" replace />
+                  <Navigate to="/" replace />
                 )
               }
             />
-            <Route path="/login" element={<AuthForm />} />
+            <Route
+              path="/"
+              element={<AuthForm onLoginSuccess={handleLoginSuccess} />}
+            />
+            <Route
+              path="/register"
+              element={
+                isLoggedIn && userData?.role === "admin" ? (
+                  <RegisterForm />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
+            />
           </Routes>
         </div>
       </div>

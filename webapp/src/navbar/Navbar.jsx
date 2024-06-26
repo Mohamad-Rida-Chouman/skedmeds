@@ -2,9 +2,7 @@ import "./navbar.css";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Navbar = ({ isLoggedIn, handleLogout }) => {
-
-
+const Navbar = ({ isLoggedIn, handleLogout, userData }) => {
   const navigate = useNavigate();
 
   return (
@@ -38,17 +36,26 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
             <span className="nav-link-disabled invisible">Emergency Contacts</span>
           )}
         </li>
+        <li className="right-margin">
+          {isLoggedIn && userData?.role === "admin" ? (
+            <Link to="/register" className="nav-link">
+              Register
+            </Link>
+          ) : (
+            <span className="nav-link-disabled invisible">Register</span>
+          )}
+        </li>
         <li>
-        {isLoggedIn ? (
-          <button className="nav-button" onClick={handleLogout}>
-            Logout
-          </button>
-        ) : (
-          <button className="nav-button invisible">
-            Logout
-          </button>
-        )}
-      </li>
+          {isLoggedIn ? (
+            <button className="nav-button" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <button className="nav-button invisible">
+              Logout
+            </button>
+          )}
+        </li>
       </ul>
     </nav>
   );

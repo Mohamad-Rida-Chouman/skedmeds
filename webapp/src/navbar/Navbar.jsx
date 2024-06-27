@@ -10,7 +10,7 @@ const Navbar = ({ isLoggedIn, handleLogout, userData }) => {
       <h1 className="nav-title">SkedMeds / Admin Panel</h1>
       <ul className="nav-list">
         <li className="right-margin">
-          {isLoggedIn ? (
+          {isLoggedIn && userData?.role === "admin" ? (
             <Link to="/medicines" className="nav-link">
               Medicines
             </Link>
@@ -19,7 +19,7 @@ const Navbar = ({ isLoggedIn, handleLogout, userData }) => {
           )}
         </li>
         <li className="right-margin">
-          {isLoggedIn ? (
+          {isLoggedIn && userData?.role === "admin" ? (
             <Link to="/posts" className="nav-link">
               Posts
             </Link>
@@ -28,9 +28,18 @@ const Navbar = ({ isLoggedIn, handleLogout, userData }) => {
           )}
         </li>
         <li className="right-margin">
-          {isLoggedIn ? (
+          {isLoggedIn && userData?.role === "admin" ? (
             <Link to="/emergency-contacts" className="nav-link">
               Emergency Contacts
+            </Link>
+          ) : (
+            <span className="nav-link-disabled invisible">Emergency Contacts</span>
+          )}
+        </li>
+        <li className="right-margin">
+          {isLoggedIn && userData?.role === "caregiver" ? (
+            <Link to="/reminders" className="nav-link">
+              Reminders
             </Link>
           ) : (
             <span className="nav-link-disabled invisible">Emergency Contacts</span>

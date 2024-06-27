@@ -9,13 +9,14 @@ import {
   doc,
   setDoc,
   updateDoc,
+  getDoc,
 } from "firebase/firestore";
 import { app } from "./firebase"; // Import Firebase app and firestore instance
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userRole, setUserRole] = useState("caregiver");
+  const [userRole, setUserRole] = useState("caregiver"); // Default role
   const [registerErrorMessage, setRegisterErrorMessage] = useState(null);
   const [users, setUsers] = useState([]); // State for retrieved users
   const [selectedUsers, setSelectedUsers] = useState([]); // State for selected users
@@ -34,7 +35,7 @@ function RegisterForm() {
         email,
         role: userRole,
         uid: userCredential.user.uid,
-        linkedCaregivers: [], // Array to store linked caregiver IDs
+        linkedPatients: selectedUsers, // Array to store linked patient IDs
       };
 
       // Add user data to Firestore with user ID as document name
@@ -43,7 +44,8 @@ function RegisterForm() {
 
       setEmail(""); // Clear form fields after successful registration
       setPassword("");
-      setUserRole("caregiver");
+      setUserRole("caregiver"); // Reset role to default
+      setSelectedUsers([]);
       setRegisterErrorMessage("User created successfully!");
     } catch (error) {
       console.error("Registration failed:", error.message);
@@ -87,93 +89,57 @@ function RegisterForm() {
     }
   };
 
-  const handleLinkUsers = async () => {
-    if (!selectedUsers.length) {
-      return; // No users selected, do nothing
-    }
-
-    const caregiverId = localStorage.getItem("caregiverId"); // Assuming caregiver ID is stored in localStorage
-
-    for (const userId of selectedUsers) {
-      const userRef = doc(db, "app_users", userId);
-      try {
-        await updateDoc(userRef, {
-          linkedCaregivers: [...new Set([...userRef.data().linkedCaregivers, caregiverId])],
-        });
-      } catch (error) {
-        console.error("Error linking user:", error);
-      }
-    }
-
-    setSelectedUsers([]); // Clear selected users after linking
-    console.log("Successfully linked users to caregiver!");
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <>
       <h2>Register</h2>
-      <label htmlFor="email">Email:</label>
-      <input type="email" id="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-      <label htmlFor="password">Password:</label>
-      <input type="password" id="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-      <div className="role-selection">
-        <label>
-          <input
-            type="radio"
-            id="admin"
-            name="role"
-            value="admin"
-            checked={userRole === "admin"}
-            onChange={handleRoleChange}
-          />
-          Admin
-        </label>
-        <label>
-          <input
-            type="radio"
-            id="caregiver"
-            name="role"
-            value="caregiver"
-            checked={userRole === "caregiver"}
-            onChange={handleRoleChange}
-          />
-          Caregiver
-        </label>
-      </div>
-      <button type="submit">Register</button>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Select</th>
-          </tr>
-        </thead>
-        <tbody>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email:</label>
+        <input type="email" id="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label htmlFor="password">Password:</label>
+        <input type="password" id="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="role-selection">
+          <label>
+            <input
+              type="radio"
+              id="admin"
+              name="role"
+              value="admin"
+              checked={userRole === "admin"}
+              onChange={handleRoleChange}
+            />
+            Admin
+          </label>
+          <label>
+            <input
+              type="radio"
+              id="caregiver"
+              name="role"
+              value="caregiver"
+              checked={userRole === "caregiver"}
+              onChange={handleRoleChange}
+            />
+            Caregiver
+          </label>
+        </div>
+        <label htmlFor="patients">Select Patients (for Caregiver):</label>
+        <ul>
           {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  value={user.id}
-                  checked={selectedUsers.includes(user.id)}
-                  onChange={handleUserSelection}
-                />
-              </td>
-            </tr>
+            <li key={user.id}>
+              <input
+                type="checkbox"
+                value={user.id}
+                checked={selectedUsers.includes(user.id)}
+                onChange={handleUserSelection}
+                disabled={userRole === "admin"} // Disable admin selection
+              />
+              {user.username}
+            </li>
           ))}
-        </tbody>
-      </table>
-
-      <button type="button" onClick={handleLinkUsers} disabled={!selectedUsers.length}>
-        Link Selected Users
-      </button>
-      {registerErrorMessage && <p className="error-message">{registerErrorMessage}</p>}
-    </form>
+        </ul>
+        <button type="submit">Register</button>
+        {registerErrorMessage && <p className="error-message">{registerErrorMessage}</p>} {/* Display error message */}
+      </form>
+    </>
   );
 }
-
 export default RegisterForm;

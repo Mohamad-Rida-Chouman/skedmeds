@@ -45,6 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .set({
           'email': _email,
           'username': _username,
+          'patientId': userCredential.user!.uid,
           // Add other user data fields here
         });
 

@@ -38,8 +38,17 @@ const Navbar = ({ isLoggedIn, handleLogout, userData }) => {
         </li>
         <li className="right-margin">
           {isLoggedIn && userData?.role === "caregiver" ? (
-            <Link to="/reminders" className="nav-link">
-              Reminders
+            <Link to="/appointment_reminders" className="nav-link">
+              Appointments
+            </Link>
+          ) : (
+            <span className="nav-link-disabled invisible">Emergency Contacts</span>
+          )}
+        </li>
+        <li className="right-margin">
+          {isLoggedIn && userData?.role === "caregiver" ? (
+            <Link to="/pill_reminders" className="nav-link">
+              Pills
             </Link>
           ) : (
             <span className="nav-link-disabled invisible">Emergency Contacts</span>

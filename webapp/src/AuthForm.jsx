@@ -51,7 +51,7 @@ function AuthForm({ onLoginSuccess }) { // Receive onLoginSuccess prop
       // Pass user data and success flag to App.js through props
       onLoginSuccess(userData, true); // Call onLoginSuccess prop with data and success flag
       const userRole = userData?.role;
-      navigate(userRole === "admin" ? '/medicines' : '/reminders');  // Navigate based on role
+      navigate(userRole === "admin" ? '/medicines' : '/appointment_reminders');  // Navigate based on role
  
     } catch (error) {
       console.error('Login failed:', error.message);

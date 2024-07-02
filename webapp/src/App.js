@@ -13,9 +13,9 @@ import AuthForm from "./AuthForm"; // Import your AuthForm component
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { app } from "./firebase"; // Import your Firebase config
 import RegisterForm from "./RegisterForm";
-import PillReminders from "./PillReminders";
-import AppointmentReminders from "./AppointmentReminders";
+import PillRemindersList from "./pillRemindersList/PillRemindersList";
 import TestReminders from "./testReminders/TestReminders";
+import AppointmentRemindersList from "./appointmentRemindersList/AppointmentRemindersList";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -94,20 +94,20 @@ const App = () => {
               }
             />
             <Route
-              path="/appointment_reminders"
+              path="/pill_reminders"
               element={
                 isLoggedIn && userData?.role === "caregiver" ? (
-                  <TestReminders />
+                  <PillRemindersList />
                 ) : (
                   <Navigate to="/" replace />
                 )
               }
             />
             <Route
-              path="/pill_reminders"
+              path="/appointment_reminders"
               element={
                 isLoggedIn && userData?.role === "caregiver" ? (
-                  <PillReminders />
+                  <AppointmentRemindersList />
                 ) : (
                   <Navigate to="/" replace />
                 )

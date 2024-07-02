@@ -12,13 +12,13 @@ import {
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import Modal from "../modal/Modal";
-import TestForm from "../testForm/TestForm"
+import AppointmentRemindersForm from "../appointmentRemindersForm/AppointmentRemindersForm"
 
-const RemindersList = () => {
+const AppointmentRemindersList = () => {
   const [reminders, setReminders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editReminderId, setEditReminderId] = useState(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const db = getFirestore(app);
 
@@ -74,17 +74,6 @@ const RemindersList = () => {
     setEditReminderId(id);
   };
 
-  const handleAddReminder = async (reminder) => {
-    try {
-      await addDoc(collection(db, "appointments_reminder"), reminder);
-      console.log("Reminder added");
-      setEditReminderId(null);
-      setIsAddModalOpen(false);
-    } catch (error) {
-      console.error("Error adding reminder:", error);
-    }
-  };
-
   const handleUpdateReminder = async (reminder) => {
     if (!reminder.id) {
       console.error("Error: Missing reminder ID for update");
@@ -102,22 +91,11 @@ const RemindersList = () => {
 
   return (
     <div className="container">
-      <h2>Reminder List</h2>
-      {/* <button
-        className="button addButton"
-        onClick={() => setIsAddModalOpen(true)}
-      >
-        Add Reminder
-      </button>
-      {isAddModalOpen && (
-        <Modal onClose={() => setIsAddModalOpen(false)}>
-          <TestForm onSubmit={handleAddReminder} />
-        </Modal>
-      )} */}
+      <h2>Appointment Reminders List</h2>
 
       {editReminderId && (
         <Modal onClose={() => setEditReminderId(null)}>
-          <TestForm
+          <AppointmentRemindersForm
             isEdit={true}
             reminderId={editReminderId}
             reminder={reminders.find(
@@ -168,4 +146,4 @@ const RemindersList = () => {
   );
 };
 
-export default RemindersList;
+export default AppointmentRemindersList;

@@ -12,13 +12,13 @@ import {
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import Modal from "../modal/Modal";
-import TestForm from "../testForm/TestForm"
+import PillRemindersForm from "../pillRemindersForm/PillRemindersForm";
 
-const RemindersList = () => {
+const PillRemindersList = () => {
   const [reminders, setReminders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editReminderId, setEditReminderId] = useState(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const db = getFirestore(app);
 
@@ -33,7 +33,7 @@ const RemindersList = () => {
 
         console.log("Current User Details:", userData);
 
-        const unsubscribe = onSnapshot(collection(db, "appointments_reminder"), (snapshot) => {
+        const unsubscribe = onSnapshot(collection(db, "pill_reminders"), (snapshot) => {
           const reminderData = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
@@ -59,7 +59,7 @@ const RemindersList = () => {
   };
 
   const handleDeleteReminder = (id) => {
-    const reminderDocRef = doc(collection(db, "appointments_reminder"), id);
+    const reminderDocRef = doc(collection(db, "pill_reminders"), id);
     deleteDoc(reminderDocRef)
       .then(() => {
         console.log("Reminder deleted");
@@ -74,23 +74,12 @@ const RemindersList = () => {
     setEditReminderId(id);
   };
 
-  const handleAddReminder = async (reminder) => {
-    try {
-      await addDoc(collection(db, "appointments_reminder"), reminder);
-      console.log("Reminder added");
-      setEditReminderId(null);
-      setIsAddModalOpen(false);
-    } catch (error) {
-      console.error("Error adding reminder:", error);
-    }
-  };
-
   const handleUpdateReminder = async (reminder) => {
     if (!reminder.id) {
       console.error("Error: Missing reminder ID for update");
       return;
     }
-    const reminderDocRef = doc(collection(db, "appointments_reminder"), reminder.id);
+    const reminderDocRef = doc(collection(db, "pill_reminders"), reminder.id);
     try {
       await updateDoc(reminderDocRef, reminder);
       console.log("Reminder updated");
@@ -102,22 +91,11 @@ const RemindersList = () => {
 
   return (
     <div className="container">
-      <h2>Reminder List</h2>
-      {/* <button
-        className="button addButton"
-        onClick={() => setIsAddModalOpen(true)}
-      >
-        Add Reminder
-      </button>
-      {isAddModalOpen && (
-        <Modal onClose={() => setIsAddModalOpen(false)}>
-          <TestForm onSubmit={handleAddReminder} />
-        </Modal>
-      )} */}
+      <h2>Pill Reminders List</h2>
 
       {editReminderId && (
         <Modal onClose={() => setEditReminderId(null)}>
-          <TestForm
+          <PillRemindersForm
             isEdit={true}
             reminderId={editReminderId}
             reminder={reminders.find(
@@ -134,15 +112,17 @@ const RemindersList = () => {
           <thead>
             <tr>
               <th className="tableHeader">Name</th>
-              <th className="tableHeader">Date</th>
+              <th className="tableHeader">Time</th>
+              <th className="tableHeader">Frequency</th>
               <th className="tableHeader">Actions</th>
             </tr>
           </thead>
           <tbody>
             {reminders.map((reminder) => (
               <tr key={reminder.id}>
-                <td className="tableData">{reminder.name}</td>
-                <td className="tableData">{reminder.dateTime}</td>
+                <td className="tableData">{reminder.medicationName}</td>
+                <td className="tableData">{reminder.reminderTime}</td>
+                <td className="tableData">{reminder.frequency}</td>
                 <td className="tableData">
                   <div className="actions">
                     <button
@@ -168,4 +148,4 @@ const RemindersList = () => {
   );
 };
 
-export default RemindersList;
+export default PillRemindersList;

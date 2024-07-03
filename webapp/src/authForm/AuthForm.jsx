@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { collection, getFirestore , query, where, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { app } from "./firebase"; // Import your Firebase config
+import { app } from "../firebase"; // Import your Firebase config
 import { useNavigate } from 'react-router-dom';
+import "./authForm.css"
 
 function AuthForm({ onLoginSuccess }) { // Receive onLoginSuccess prop
 

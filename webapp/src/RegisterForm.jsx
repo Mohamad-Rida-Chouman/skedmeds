@@ -12,6 +12,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { app } from "./firebase"; // Import Firebase app and firestore instance
+import "./registerForm.css";
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -90,7 +91,7 @@ function RegisterForm() {
   };
 
   return (
-    <>
+    <div className="register-form">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
@@ -139,7 +140,7 @@ function RegisterForm() {
         <button type="submit">Register</button>
         {registerErrorMessage && <p className="error-message">{registerErrorMessage}</p>} {/* Display error message */}
       </form>
-    </>
+    </div>
   );
 }
 export default RegisterForm;

@@ -1,0 +1,56 @@
+.auth-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh; /* Ensure form covers entire viewport height */
+    background-color: #f0f0f0; /* Optional background color */
+  }
+  
+  .auth-form form {
+    display: flex; /* Make form a column container */
+    flex-direction: column; /* Stack form elements vertically */
+    width: 300px; /* Set form width */
+    padding: 20px;
+    border-radius: 5px; /* Add rounded corners */
+    background-color: #fff; /* Form background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  }
+  
+  .auth-form form h2 {
+    margin-bottom: 20px;
+    text-align: center; /* Center heading text */
+  }
+  
+  .auth-form form label {
+    margin-bottom: 5px;
+    display: block; /* Make labels block-level for spacing */
+  }
+  
+  .auth-form form input[type="email"],
+  .auth-form form input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 15px;
+  }
+  
+  .auth-form form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .auth-form form button:hover {
+    background-color: #222;
+  }
+  
+  .auth-form form .error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+  }
+  

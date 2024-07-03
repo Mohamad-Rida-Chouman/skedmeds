@@ -1,0 +1,89 @@
+.register-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f0f0f0;
+  }
+  
+  .register-form form {
+    display: flex;
+    flex-direction: column;
+    width: 400px; /* Adjust width as needed */
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
+  }
+  
+  .register-form form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .register-form form label {
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .register-form form input[type="email"],
+  .register-form form input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 15px;
+  }
+  
+  .register-form form .role-selection {
+    margin-bottom: 15px;
+  }
+  
+  .register-form form .role-selection label {
+    display: inline-block;
+    margin-right: 15px;
+  }
+  
+  .register-form form .role-selection input[type="radio"] {
+    margin-right: 5px;
+  }
+  
+  .register-form form label[for="patients"] {
+    margin-bottom: 10px;
+  }
+  
+  .register-form form ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .register-form form ul li {
+    margin-bottom: 5px;
+  }
+  
+  .register-form form input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  
+  .register-form form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .register-form form button:hover {
+    background-color: #222;
+  }
+  
+  .register-form form .error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+  }
+  

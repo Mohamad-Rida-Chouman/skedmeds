@@ -9,7 +9,7 @@ import EmergencyContactList from "./emergencyContactList/EmergencyContactList";
 import PostList from "./postList/PostList";
 import MedicineList from "./medicineList/MedicineList";
 import Navbar from "./navbar/Navbar";
-import AuthForm from "./AuthForm"; // Import your AuthForm component
+import AuthForm from "./authForm/AuthForm"; // Import your AuthForm component
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { app } from "./firebase"; // Import your Firebase config
 import RegisterForm from "./RegisterForm";
